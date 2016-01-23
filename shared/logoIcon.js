@@ -18,11 +18,11 @@ module.exports = React.createClass({
         } else {
             return <Icon
               name={this.props.icon}
-              size={35}
+              size={34}
               color='#FFF'
               style={{
-                width: 35,
-                height: 35
+                width: 34,
+                height: 34
               }}
             />
         }

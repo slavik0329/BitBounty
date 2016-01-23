@@ -32,7 +32,6 @@ var HomeScreen = React.createClass({
     }
   },  
   componentDidMount () {
-
     this.refresh();
   },
   renderBounty(bounty)  {
@@ -48,7 +47,11 @@ var HomeScreen = React.createClass({
         userImage: "https://scontent-ord1-1.xx.fbcdn.net/hprofile-xfa1/v/t1.0-1/p320x320/11903719_991959437513464_2888597908116804130_n.jpg?oh=d266cfcc7b13d6c5a8f91ca07aa906af&oe=573AA7A0",
         bountyAmount: 0.15,
         title: "Feed the homeless in Wynwood",
-        description: "Help feed some hungry people in Wynwood. You must submit proof in order to recieve payment."
+        description: "Help feed some hungry people in Wynwood. You must submit proof in order to recieve payment.",
+        location: {
+          latitude: 26.801336,
+          longitude: -80.199341,
+        }
       },
       {
         username: "Slavik",
