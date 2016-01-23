@@ -35,8 +35,6 @@ module.exports = React.createClass({
         
         <MapView
           region={this.props.region}
-          showsUserLocation={true}
-          followUserLocation={false}
           legalLabelInsets={{
               bottom: 6, 
               right: 6,

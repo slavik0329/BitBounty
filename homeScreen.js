@@ -5,6 +5,7 @@ var TopSpacer = require('./shared/topSpacer.js');
 var TitleBar = require('./shared/titleBar.js');
 var BountyItem = require('./common/bountyItem.js');
 var ScrollWithRefresh = require('./shared/scrollWithRefresh.js');
+var AddBountyScreen = require('./addBountyScreen.js');
 
 import {connect} from 'react-redux/native'
 import {login, logout, menuChange} from './app/actions/main'
@@ -41,6 +42,10 @@ var HomeScreen = React.createClass({
             data={bounty}/>
   },
   refresh () {
+    this.setState({
+      isRefreshing: true
+    })
+
     var bounties = [
       {
         username: "JasonKing",
@@ -63,7 +68,13 @@ var HomeScreen = React.createClass({
     ];
 
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(bounties)
+      dataSource: this.state.dataSource.cloneWithRows(bounties),
+      isRefreshing: false
+    })
+  },
+  handleAddBounty() {
+    this.props.navigator.push({
+      component: AddBountyScreen
     })
   },
   render: function() {
@@ -72,7 +83,8 @@ var HomeScreen = React.createClass({
       <View style={[styles.container]}>
         <TopSpacer />
         <TitleBar 
-          title={"Bounti"}/>
+          title={"Bounti"}
+          onAddPress={this.handleAddBounty}/>
 
         <ScrollWithRefresh 
           dataSource={this.state.dataSource}

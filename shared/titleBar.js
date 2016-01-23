@@ -32,9 +32,6 @@ module.exports = React.createClass({
             return null;
         }
     },
-    addBounty () {
-        
-    },
     render: function () {
         var backStyle = styles.blueBack;
         var backTextStyle = styles.whiteText;
@@ -49,10 +46,8 @@ module.exports = React.createClass({
 
                 <LogoIcon
                     style={styles.plusButton}
-                    onPress={this.addBounty}
-                    icon="fontawesome|plus-circle"/>
-               
-                
+                    onPress={this.props.onAddPress}
+                    icon="fontawesome|plus-circle"/>                
             </View>
         );
     }
