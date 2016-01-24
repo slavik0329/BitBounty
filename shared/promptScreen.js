@@ -21,7 +21,8 @@ var PromptScreen = React.createClass({
     return {
       screenTitle: "",
       submitText: "Next",
-      showSubmit: true
+      showSubmit: true,
+      titleMargin: 30
     }
   },
   propTypes: {
@@ -46,11 +47,14 @@ var PromptScreen = React.createClass({
       <View style={styles.container}>        
         <TopSpacer />
         <GoBack 
+          backTitle={this.props.backTitle}
           title={this.props.screenTitle}
           onPress={this.props.onBackPress}/>
 
         <Text
-          style={styles.promptTitle}>
+          style={[styles.promptTitle, {
+            marginTop:this.props.titleMargin,
+          }]}>
           {this.props.promptTitle}
         </Text>
 

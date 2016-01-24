@@ -2,11 +2,11 @@
 
 var React = require('react-native');
 
-var PromptScreen = require('./shared/promptScreen.js')
-var BountyAmountScreen = require('./addBounty/bountyAmountScreen.js')
+var PromptScreen = require('../shared/promptScreen.js')
+// var BountyLocationScreen = require('./bountyLocationScreen.js')
 
 import {connect} from 'react-redux/native'
-import {setTitle} from './app/actions/addBounty'
+// import {setAmount} from '../app/actions/addBounty'
 
 var {
   StyleSheet,
@@ -14,7 +14,7 @@ var {
   View,
 } = React;
 
-var AddBountyScreen = React.createClass({
+var PickupAvailableScreen = React.createClass({
   getInitialState() {
     return {
     };
@@ -25,19 +25,18 @@ var AddBountyScreen = React.createClass({
   handleSubmit(){
 
     this.props.navigator.push({
-      component: BountyAmountScreen
+      component: BountyLocationScreen
     });
     
   },
-  handleTitleChange(title) {
-    this.props.dispatch(setTitle(title))
+  handleAmountChange(amount) {
+    this.props.dispatch(setAmount(amount))
   },
   render: function() {
     return (
       <View style={styles.container}>        
         <PromptScreen
-          promptTitle="Enter a title for your bounty request"
-          backTitle={"Cancel"}
+          promptTitle="How much do you want to award for completion of this bounty?"
           onSubmit={this.handleSubmit}
           screenTitle={"Add Bounty"}
           onBackPress={()=>{
@@ -45,12 +44,13 @@ var AddBountyScreen = React.createClass({
           }}>
           <TextInput 
             ref={"input"}
-            placeholder={"Title"}
+            placeholder={"(ex. ฿0.00)"}
+            keyboardType="numeric"
             placeholderTextColor={"#0776B7"}
             clearTextOnFocus={true}
             autoFocus={true}
-            value={this.props.addBounty.data.title}
-            onChangeText={this.handleTitleChange}
+            value={this.props.addBounty.data.amount}
+            onChangeText={this.handleAmountChange}
             style={styles.textInput}/>
         </PromptScreen>  
       </View>
@@ -64,7 +64,7 @@ function mapStateToProps(state) {
   }
 }
 
-module.exports = connect(mapStateToProps)(AddBountyScreen)
+module.exports = connect(mapStateToProps)(PickupAvailableScreen)
 
 var styles = StyleSheet.create({
   container: {
@@ -77,8 +77,9 @@ var styles = StyleSheet.create({
     padding:8,
     borderRadius:4,
     fontSize:16,
-    width: 320,
+    width: 150,
     alignSelf:"center",
+    textAlign: "center",
     fontWeight:"200"
   },
 });

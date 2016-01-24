@@ -2,7 +2,8 @@ const initialState = {
     data: {
         title: "",
         amount: null,
-        location: null
+        location: null,
+        notes:""
     }
 };
 
@@ -31,6 +32,15 @@ export default function main(state = initialState, action) {
                 data: {
                     ...state.data,
                     location: action.location
+                }
+            }
+
+        case "SET_NOTES":
+            return {
+                ...state,
+                data: {
+                    ...state.data,
+                    notes: action.notes
                 }
             }
     }

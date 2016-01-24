@@ -5,7 +5,7 @@ var React = require('react-native');
 var PromptScreen = require('../shared/promptScreen.js')
 var MapWithCenterPin = require('../shared/mapWithCenterPin.js')
 
-// var BountyLocationScreen = require('./bountyLocationScreen.js')
+var BountyNotesScreen = require('./bountyNotesScreen.js')
 
 import {connect} from 'react-redux/native'
 import {setLocation} from '../app/actions/addBounty'
@@ -80,7 +80,7 @@ var PickupAvailableScreen = React.createClass({
   handleSubmit(){
 
     this.props.navigator.push({
-      component: BountyLocationScreen
+      component: BountyNotesScreen
     });
     
   },
@@ -111,6 +111,7 @@ var PickupAvailableScreen = React.createClass({
     return (
       <View style={styles.container}>        
         <PromptScreen
+          titleMargin={10}
           promptTitle="Where will this need to be completed?"
           onSubmit={this.handleSubmit}
           screenTitle={"Add Bounty"}

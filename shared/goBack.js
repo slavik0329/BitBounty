@@ -17,6 +17,7 @@ var {
 module.exports = React.createClass({
     getDefaultProps: function () {
         return {
+            backTitle: "Back"
         };
     },
     getTitle: function () {
@@ -63,7 +64,7 @@ module.exports = React.createClass({
                             top: 5
                         }}
                         onPress={this.props.onPress}>
-                        <Text style={styles.textStyle}>Back</Text>
+                        <Text style={styles.textStyle}>{this.props.backTitle}</Text>
 
                     </TouchableOpacity>
                     

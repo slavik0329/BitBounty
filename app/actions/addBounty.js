@@ -12,6 +12,13 @@ export function setAmount (amount) {
     }
 }
 
+export function setNotes (notes) {
+    return {
+        type: "SET_NOTES",
+        notes: notes
+    }
+}
+
 export function setLocation (location) {
     return {
         type: "SET_LOCATION",

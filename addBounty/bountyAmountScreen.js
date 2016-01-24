@@ -79,6 +79,7 @@ var styles = StyleSheet.create({
     fontSize:16,
     width: 150,
     alignSelf:"center",
+    textAlign: "center",
     fontWeight:"200"
   },
 });

@@ -6,9 +6,10 @@ var TitleBar = require('./shared/titleBar.js');
 var BountyItem = require('./common/bountyItem.js');
 var ScrollWithRefresh = require('./shared/scrollWithRefresh.js');
 var AddBountyScreen = require('./addBountyScreen.js');
+var UsernameNag = require('./shared/usernameNag.js');
 
 import {connect} from 'react-redux/native'
-import {login, logout, menuChange} from './app/actions/main'
+import {login, logout, menuChange, setUsername} from './app/actions/main'
 
 var {
   Dimensions,
@@ -72,6 +73,9 @@ var HomeScreen = React.createClass({
       isRefreshing: false
     })
   },
+  handleUsernameSet(username) {
+    this.props.dispatch( setUsername(username) )
+  },
   handleAddBounty() {
     this.props.navigator.push({
       component: AddBountyScreen
@@ -81,6 +85,9 @@ var HomeScreen = React.createClass({
   
     return (
       <View style={[styles.container]}>
+        <UsernameNag 
+          onUsernameSet={this.handleUsernameSet}
+          account={this.props.main.account}/>
         <TopSpacer />
         <TitleBar 
           title={"Bounti"}

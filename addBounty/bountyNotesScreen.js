@@ -1,14 +1,13 @@
 'use strict';
 
 var React = require('react-native');
-var FullSwitch = require('../shared/fullSwitch.js')
 
 var PromptScreen = require('../shared/promptScreen.js')
-var BountyMapInputScreen = require('./bountyMapInputScreen.js')
-var BountyNotesScreen = require('./bountyNotesScreen.js')
+
+// var BountyNotes = require('./bountyNotes.js')
 
 import {connect} from 'react-redux/native'
-// import {setLocation} from '../app/actions/addBounty'
+import {setNotes} from '../app/actions/addBounty'
 
 var {
   StyleSheet,
@@ -16,42 +15,47 @@ var {
   View,
 } = React;
 
+var timer;
+
 var PickupAvailableScreen = React.createClass({
   getInitialState() {
     return {
-      locationEnabled: false
     };
   },
-  componentDidMount(){
 
-  },
-  handleSubmit(){
-    if ( this.state.locationEnabled ) {
-      var component = BountyMapInputScreen;
-    } else {
-      var component = BountyNotesScreen;
-    }
-    this.props.navigator.push({
-      component
-    });
+  componentWillMount() {
     
   },
-  handleAmountChange(amount) {
-    this.props.dispatch(setAmount(amount))
+  handleSubmit(){
+
+    // this.props.navigator.push({
+    //   component: BountyLocationScreen
+    // });
+    
+  },
+  handleNotesChange(notes) {
+    this.props.dispatch(setNotes(notes))
   },
   render: function() {
     return (
       <View style={styles.container}>        
         <PromptScreen
-          promptTitle="Does this need to be completed at a particular location?"
+          titleMargin={10}
+          promptTitle="Enter an additional description"
           onSubmit={this.handleSubmit}
           screenTitle={"Add Bounty"}
+          submitText={"Finish"}
           onBackPress={()=>{
             this.props.navigator.pop()
           }}>
-          <FullSwitch 
-            value={this.state.locationEnabled}
-            onValueChange={(locationEnabled)=>this.setState({locationEnabled})}/>
+          
+          <TextInput
+            style={styles.textInput}
+            autoFocus={true}
+            placeholder={"Notes..."}
+            value={this.props.addBounty.data.notes}
+            onChangeText={this.handleNotesChange}
+            multiline={true}/>
 
         </PromptScreen>  
       </View>
@@ -73,13 +77,13 @@ var styles = StyleSheet.create({
   }, 
   textInput: {
     color:"#FFF",
-    height: 40,
+    height: 140,
     backgroundColor:"#0587D4",
     padding:8,
     borderRadius:4,
     fontSize:16,
-    width: 150,
-    alignSelf:"center",
-    fontWeight:"200"
+    width: 350,
+    fontWeight:"200",
+    alignSelf:"center"
   },
 });
