@@ -31,6 +31,7 @@
 		AA7E84391C53CEAE0081E1B9 /* zocial-regular-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA7E84331C53CEAE0081E1B9 /* zocial-regular-webfont.ttf */; };
 		AA7E843E1C53D5E80081E1B9 /* Bitter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA7E843C1C53D5E80081E1B9 /* Bitter-Regular.ttf */; };
 		AA7E843F1C53D5E80081E1B9 /* Bitter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA7E843D1C53D5E80081E1B9 /* Bitter-Bold.ttf */; };
+		AA7E84421C5449A80081E1B9 /* map_poi.png in Resources */ = {isa = PBXBuildFile; fileRef = AA7E84411C5449A80081E1B9 /* map_poi.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -132,7 +133,7 @@
 		00E356F21AD99517003FC87E /* reactSkeletonTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = reactSkeletonTests.m; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* reactSkeleton.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reactSkeleton.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* Bounti.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bounti.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = reactSkeleton/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = reactSkeleton/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -151,6 +152,7 @@
 		AA7E84331C53CEAE0081E1B9 /* zocial-regular-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "zocial-regular-webfont.ttf"; sourceTree = "<group>"; };
 		AA7E843C1C53D5E80081E1B9 /* Bitter-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bitter-Regular.ttf"; sourceTree = "<group>"; };
 		AA7E843D1C53D5E80081E1B9 /* Bitter-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bitter-Bold.ttf"; sourceTree = "<group>"; };
+		AA7E84411C5449A80081E1B9 /* map_poi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map_poi.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -258,6 +260,7 @@
 		13B07FAE1A68108700A75B9A /* reactSkeleton */ = {
 			isa = PBXGroup;
 			children = (
+				AA7E84401C5448CA0081E1B9 /* images */,
 				AA7E843B1C53D5C00081E1B9 /* fonts */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -333,7 +336,7 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* reactSkeleton.app */,
+				13B07F961A680F5B00A75B9A /* Bounti.app */,
 				00E356EE1AD99517003FC87E /* reactSkeletonTests.xctest */,
 			);
 			name = Products;
@@ -354,6 +357,14 @@
 				AA7E843D1C53D5E80081E1B9 /* Bitter-Bold.ttf */,
 			);
 			name = fonts;
+			sourceTree = "<group>";
+		};
+		AA7E84401C5448CA0081E1B9 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				AA7E84411C5449A80081E1B9 /* map_poi.png */,
+			);
+			name = images;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -392,7 +403,7 @@
 			);
 			name = reactSkeleton;
 			productName = "Hello World";
-			productReference = 13B07F961A680F5B00A75B9A /* reactSkeleton.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* Bounti.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -407,6 +418,9 @@
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
+					};
+					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = GKJZVN4K8D;
 					};
 				};
 			};
@@ -574,6 +588,7 @@
 				AA7E84361C53CEAE0081E1B9 /* ionicons.ttf in Resources */,
 				AA7E84371C53CEAE0081E1B9 /* Material-Design-Iconic-Font.ttf in Resources */,
 				AA7E84381C53CEAE0081E1B9 /* octicons.ttf in Resources */,
+				AA7E84421C5449A80081E1B9 /* map_poi.png in Resources */,
 				AA7E84391C53CEAE0081E1B9 /* zocial-regular-webfont.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
@@ -681,6 +696,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEAD_CODE_STRIPPING = NO;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -690,7 +707,8 @@
 				INFOPLIST_FILE = reactSkeleton/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = reactSkeleton;
+				PRODUCT_NAME = Bounti;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -698,6 +716,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -706,7 +726,8 @@
 				INFOPLIST_FILE = reactSkeleton/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = reactSkeleton;
+				PRODUCT_NAME = Bounti;
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};

@@ -1,12 +1,13 @@
 'use strict';
 
 var React = require('react-native');
+var FullSwitch = require('../shared/fullSwitch.js')
 
-var PromptScreen = require('./shared/promptScreen.js')
-var BountyAmountScreen = require('./addBounty/bountyAmountScreen.js')
+var PromptScreen = require('../shared/promptScreen.js')
+var BountyMapInputScreen = require('./bountyMapInputScreen.js')
 
 import {connect} from 'react-redux/native'
-import {setTitle} from './app/actions/addBounty'
+// import {setLocation} from '../app/actions/addBounty'
 
 var {
   StyleSheet,
@@ -14,43 +15,43 @@ var {
   View,
 } = React;
 
-var AddBountyScreen = React.createClass({
+var PickupAvailableScreen = React.createClass({
   getInitialState() {
     return {
+      locationEnabled: false
     };
   },
   componentDidMount(){
 
   },
   handleSubmit(){
-
+    if ( this.state.locationEnabled ) {
+      var component = BountyMapInputScreen;
+    } else {
+      var component = BountyNotesScreen;
+    }
     this.props.navigator.push({
-      component: BountyAmountScreen
+      component: BountyMapInputScreen
     });
     
   },
-  handleTitleChange(title) {
-    this.props.dispatch(setTitle(title))
+  handleAmountChange(amount) {
+    this.props.dispatch(setAmount(amount))
   },
   render: function() {
     return (
       <View style={styles.container}>        
         <PromptScreen
-          promptTitle="Enter a title for your bounty request"
+          promptTitle="Does this need to be completed at a particular location?"
           onSubmit={this.handleSubmit}
           screenTitle={"Add Bounty"}
           onBackPress={()=>{
             this.props.navigator.pop()
           }}>
-          <TextInput 
-            ref={"input"}
-            placeholder={"Title"}
-            placeholderTextColor={"#0776B7"}
-            clearTextOnFocus={true}
-            autoFocus={true}
-            value={this.props.addBounty.data.title}
-            onChangeText={this.handleTitleChange}
-            style={styles.textInput}/>
+          <FullSwitch 
+            value={this.state.locationEnabled}
+            onValueChange={(locationEnabled)=>this.setState({locationEnabled})}/>
+
         </PromptScreen>  
       </View>
     );
@@ -63,7 +64,7 @@ function mapStateToProps(state) {
   }
 }
 
-module.exports = connect(mapStateToProps)(AddBountyScreen)
+module.exports = connect(mapStateToProps)(PickupAvailableScreen)
 
 var styles = StyleSheet.create({
   container: {
@@ -76,7 +77,7 @@ var styles = StyleSheet.create({
     padding:8,
     borderRadius:4,
     fontSize:16,
-    width: 320,
+    width: 150,
     alignSelf:"center",
     fontWeight:"200"
   },

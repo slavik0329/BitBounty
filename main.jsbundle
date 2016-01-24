@@ -59917,11 +59917,13 @@ return typeof action==='function'?action(dispatch,getState):next(action);};};}
 
 module.exports=thunkMiddleware;
 });
-__d('reactSkeleton/app/reducers/index.js',function(global, require, module, exports) {  Object.defineProperty(exports,"__esModule",{value:true});var _redux=require('redux/lib/index.js');var _main=require('reactSkeleton/app/reducers/main.js');var _main2=babelHelpers.interopRequireDefault(_main);
+__d('reactSkeleton/app/reducers/index.js',function(global, require, module, exports) {  Object.defineProperty(exports,"__esModule",{value:true});var _redux=require('redux/lib/index.js');var _main=require('reactSkeleton/app/reducers/main.js');var _main2=babelHelpers.interopRequireDefault(_main);var _addBounty=require('reactSkeleton/app/reducers/addBounty.js');var _addBounty2=babelHelpers.interopRequireDefault(_addBounty);
+
 
 
 var rootReducer=(0,_redux.combineReducers)({
-main:_main2.default});exports.default=
+main:_main2.default,
+addBounty:_addBounty2.default});exports.default=
 
 
 rootReducer;
@@ -59976,6 +59978,45 @@ case "LOGOUT":
 return babelHelpers.extends({},
 state,{
 account:{}});}
+
+
+
+return state;}
+});
+__d('reactSkeleton/app/reducers/addBounty.js',function(global, require, module, exports) {  Object.defineProperty(exports,"__esModule",{value:true});exports.default=
+
+
+
+
+
+
+
+main;var initialState={data:{title:"",amount:null,location:null}};function main(){var state=arguments.length<=0||arguments[0]===undefined?initialState:arguments[0];var action=arguments[1];
+switch(action.type){
+case "SET_TITLE":
+return babelHelpers.extends({},
+state,{
+data:babelHelpers.extends({},
+state.data,{
+title:action.title})});
+
+
+case "SET_AMOUNT":
+return babelHelpers.extends({},
+state,{
+data:babelHelpers.extends({},
+state.data,{
+amount:action.amount})});
+
+
+
+case "SET_LOCATION":
+return babelHelpers.extends({},
+state,{
+data:babelHelpers.extends({},
+state.data,{
+location:action.location})});}
+
 
 
 
@@ -60619,7 +60660,8 @@ var React=require('react-native/Libraries/react-native/react-native.js');
 var TopSpacer=require('reactSkeleton/shared/topSpacer.js');
 var TitleBar=require('reactSkeleton/shared/titleBar.js');
 var BountyItem=require('reactSkeleton/common/bountyItem.js');
-var ScrollWithRefresh=require('reactSkeleton/shared/scrollWithRefresh.js');var 
+var ScrollWithRefresh=require('reactSkeleton/shared/scrollWithRefresh.js');
+var AddBountyScreen=require('reactSkeleton/addBountyScreen.js');var 
 
 
 
@@ -60656,6 +60698,10 @@ key:bounty._id,
 data:bounty});},
 
 refresh:function(){
+this.setState({
+isRefreshing:true});
+
+
 var bounties=[
 {
 username:"JasonKing",
@@ -60678,7 +60724,13 @@ description:"I'm looking for a high speed individual to get to my house as soon 
 
 
 this.setState({
-dataSource:this.state.dataSource.cloneWithRows(bounties)});},
+dataSource:this.state.dataSource.cloneWithRows(bounties),
+isRefreshing:false});},
+
+
+handleAddBounty:function(){
+this.props.navigator.push({
+component:AddBountyScreen});},
 
 
 render:function(){
@@ -60687,7 +60739,8 @@ return (
 React.createElement(View,{style:[styles.container]},
 React.createElement(TopSpacer,null),
 React.createElement(TitleBar,{
-title:"Bounti"}),
+title:"Bounti",
+onAddPress:this.handleAddBounty}),
 
 React.createElement(ScrollWithRefresh,{
 dataSource:this.state.dataSource,
@@ -60779,9 +60832,6 @@ this.props.title);}else
 return null;}},
 
 
-addBounty:function(){},
-
-
 render:function(){
 var backStyle=styles.blueBack;
 var backTextStyle=styles.whiteText;
@@ -60796,10 +60846,8 @@ this.getTitle(),
 
 React.createElement(LogoIcon,{
 style:styles.plusButton,
-onPress:this.addBounty,
+onPress:this.props.onAddPress,
 icon:'fontawesome|plus-circle'})));}});
-
-
 
 
 
@@ -62087,6 +62135,736 @@ marginTop:3},
 text:{
 fontSize:20,
 fontWeight:"200"}});
+});
+__d('reactSkeleton/addBountyScreen.js',function(global, require, module, exports) {  'use strict';var _native=require('react-redux/native.js');var _addBounty=require('reactSkeleton/app/actions/addBounty.js');
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+
+var PromptScreen=require('reactSkeleton/shared/promptScreen.js');
+var BountyAmountScreen=require('reactSkeleton/addBounty/bountyAmountScreen.js');var 
+
+
+
+
+
+StyleSheet=
+
+
+React.StyleSheet;var TextInput=React.TextInput;var View=React.View;
+
+var AddBountyScreen=React.createClass({displayName:'AddBountyScreen',
+getInitialState:function(){
+return {};},
+
+
+componentDidMount:function(){},
+
+
+handleSubmit:function(){
+
+this.props.navigator.push({
+component:BountyAmountScreen});},
+
+
+
+handleTitleChange:function(title){
+this.props.dispatch((0,_addBounty.setTitle)(title));},
+
+render:function(){var _this=this;
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(PromptScreen,{
+promptTitle:'Enter a title for your bounty request',
+onSubmit:this.handleSubmit,
+screenTitle:"Add Bounty",
+onBackPress:function(){
+_this.props.navigator.pop();}},
+
+React.createElement(TextInput,{
+ref:"input",
+placeholder:"Title",
+placeholderTextColor:"#0776B7",
+clearTextOnFocus:true,
+autoFocus:true,
+value:this.props.addBounty.data.title,
+onChangeText:this.handleTitleChange,
+style:styles.textInput}))));}});
+
+
+
+
+
+
+function mapStateToProps(state){
+return {
+addBounty:state.addBounty};}
+
+
+
+module.exports=(0,_native.connect)(mapStateToProps)(AddBountyScreen);
+
+var styles=StyleSheet.create({
+container:{
+flex:1},
+
+textInput:{
+color:"#FFF",
+height:40,
+backgroundColor:"#0587D4",
+padding:8,
+borderRadius:4,
+fontSize:16,
+width:320,
+alignSelf:"center",
+fontWeight:"200"}});
+});
+__d('reactSkeleton/app/actions/addBounty.js',function(global, require, module, exports) {  Object.defineProperty(exports,"__esModule",{value:true});exports.setTitle=setTitle;exports.
+
+
+
+
+
+
+setAmount=setAmount;exports.
+
+
+
+
+
+
+setLocation=setLocation;function setTitle(title){return {type:"SET_TITLE",title:title};}function setAmount(amount){return {type:"SET_AMOUNT",amount:amount};}function setLocation(location){
+return {
+type:"SET_LOCATION",
+location:location};}
+});
+__d('reactSkeleton/shared/promptScreen.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+
+var GoBack=require('reactSkeleton/shared/goBack.js');
+var TopSpacer=require('reactSkeleton/shared/topSpacer.js');var 
+
+
+StyleSheet=
+
+
+
+React.StyleSheet;var Text=React.Text;var TouchableOpacity=React.TouchableOpacity;var View=React.View;
+
+var PromptScreen=React.createClass({displayName:'PromptScreen',
+getInitialState:function(){
+return {};},
+
+
+getDefaultProps:function(){
+return {
+screenTitle:"",
+submitText:"Next",
+showSubmit:true};},
+
+
+propTypes:{
+promptTitle:React.PropTypes.string.isRequired,
+screenTitle:React.PropTypes.string.isRequired,
+onBackPress:React.PropTypes.func.isRequired,
+onSubmit:React.PropTypes.func,
+showSubmit:React.PropTypes.bool},
+
+getSubmit:function(){
+if(this.props.showSubmit){
+return React.createElement(TouchableOpacity,{
+onPress:this.props.onSubmit,
+style:styles.button},
+React.createElement(Text,{
+style:styles.buttonText},this.props.submitText));}},
+
+
+
+render:function(){
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(TopSpacer,null),
+React.createElement(GoBack,{
+title:this.props.screenTitle,
+onPress:this.props.onBackPress}),
+
+React.createElement(Text,{
+style:styles.promptTitle},
+this.props.promptTitle),
+
+
+React.createElement(View,{style:styles.inputContainer},
+this.props.children),
+
+
+this.getSubmit()));}});
+
+
+
+
+
+
+
+module.exports=PromptScreen;
+
+var styles=StyleSheet.create({
+container:{
+flex:1,
+backgroundColor:"#0079c0"},
+
+promptTitle:{
+textAlign:"center",
+fontSize:28,
+marginTop:30,
+paddingRight:30,
+paddingLeft:20,
+color:"#FFF",
+fontWeight:"200"},
+
+inputContainer:{
+marginTop:24},
+
+button:{
+marginTop:28,
+padding:16,
+backgroundColor:"#0668A2",
+width:200,
+borderRadius:4,
+alignSelf:"center"},
+
+buttonText:{
+textAlign:"center",
+color:"#FFF",
+fontSize:20}});
+});
+__d('reactSkeleton/addBounty/bountyAmountScreen.js',function(global, require, module, exports) {  'use strict';var _native=require('react-redux/native.js');var _addBounty=require('reactSkeleton/app/actions/addBounty.js');
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+
+var PromptScreen=require('reactSkeleton/shared/promptScreen.js');
+var BountyLocationScreen=require('reactSkeleton/addBounty/bountyLocationScreen.js');var 
+
+
+
+
+
+StyleSheet=
+
+
+React.StyleSheet;var TextInput=React.TextInput;var View=React.View;
+
+var PickupAvailableScreen=React.createClass({displayName:'PickupAvailableScreen',
+getInitialState:function(){
+return {};},
+
+
+componentDidMount:function(){},
+
+
+handleSubmit:function(){
+
+this.props.navigator.push({
+component:BountyLocationScreen});},
+
+
+
+handleAmountChange:function(amount){
+this.props.dispatch((0,_addBounty.setAmount)(amount));},
+
+render:function(){var _this=this;
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(PromptScreen,{
+promptTitle:'How much do you want to award for completion of this bounty?',
+onSubmit:this.handleSubmit,
+screenTitle:"Add Bounty",
+onBackPress:function(){
+_this.props.navigator.pop();}},
+
+React.createElement(TextInput,{
+ref:"input",
+placeholder:"(ex. ฿0.00)",
+keyboardType:'numeric',
+placeholderTextColor:"#0776B7",
+clearTextOnFocus:true,
+autoFocus:true,
+value:this.props.addBounty.data.amount,
+onChangeText:this.handleAmountChange,
+style:styles.textInput}))));}});
+
+
+
+
+
+
+function mapStateToProps(state){
+return {
+addBounty:state.addBounty};}
+
+
+
+module.exports=(0,_native.connect)(mapStateToProps)(PickupAvailableScreen);
+
+var styles=StyleSheet.create({
+container:{
+flex:1},
+
+textInput:{
+color:"#FFF",
+height:40,
+backgroundColor:"#0587D4",
+padding:8,
+borderRadius:4,
+fontSize:16,
+width:150,
+alignSelf:"center",
+fontWeight:"200"}});
+});
+__d('reactSkeleton/addBounty/bountyLocationScreen.js',function(global, require, module, exports) {  'use strict';var _native=require('react-redux/native.js');
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var FullSwitch=require('reactSkeleton/shared/fullSwitch.js');
+
+var PromptScreen=require('reactSkeleton/shared/promptScreen.js');
+var BountyMapInputScreen=require('reactSkeleton/addBounty/bountyMapInputScreen.js');var 
+
+
+
+
+
+StyleSheet=
+
+
+React.StyleSheet;var TextInput=React.TextInput;var View=React.View;
+
+var PickupAvailableScreen=React.createClass({displayName:'PickupAvailableScreen',
+getInitialState:function(){
+return {
+locationEnabled:false};},
+
+
+componentDidMount:function(){},
+
+
+handleSubmit:function(){
+if(this.state.locationEnabled){
+var component=BountyMapInputScreen;}else 
+{
+var component=BountyNotesScreen;}
+
+this.props.navigator.push({
+component:BountyMapInputScreen});},
+
+
+
+handleAmountChange:function(amount){
+this.props.dispatch(setAmount(amount));},
+
+render:function(){var _this=this;
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(PromptScreen,{
+promptTitle:'Does this need to be completed at a particular location?',
+onSubmit:this.handleSubmit,
+screenTitle:"Add Bounty",
+onBackPress:function(){
+_this.props.navigator.pop();}},
+
+React.createElement(FullSwitch,{
+value:this.state.locationEnabled,
+onValueChange:function(locationEnabled){return _this.setState({locationEnabled:locationEnabled});}}))));}});
+
+
+
+
+
+
+
+function mapStateToProps(state){
+return {
+addBounty:state.addBounty};}
+
+
+
+module.exports=(0,_native.connect)(mapStateToProps)(PickupAvailableScreen);
+
+var styles=StyleSheet.create({
+container:{
+flex:1},
+
+textInput:{
+color:"#FFF",
+height:40,
+backgroundColor:"#0587D4",
+padding:8,
+borderRadius:4,
+fontSize:16,
+width:150,
+alignSelf:"center",
+fontWeight:"200"}});
+});
+__d('reactSkeleton/shared/fullSwitch.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');var 
+
+
+StyleSheet=
+
+
+
+
+React.StyleSheet;var Switch=React.Switch;var Text=React.Text;var TouchableOpacity=React.TouchableOpacity;var View=React.View;
+
+module.exports=React.createClass({displayName:'exports',
+getInitialState:function(){
+return {};},
+
+
+
+setFalse:function(){
+this.props.onValueChange(false);},
+
+setTrue:function(){
+this.props.onValueChange(true);},
+
+render:function(){
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(View,{style:styles.center},
+React.createElement(View,{style:styles.inputs},
+React.createElement(TouchableOpacity,{
+onPress:this.setFalse},
+React.createElement(Text,{style:styles.inputText},'No')),
+
+React.createElement(Switch,
+this.props),
+React.createElement(TouchableOpacity,{
+onPress:this.setTrue},
+React.createElement(Text,{style:styles.inputText},'Yes'))))));}});
+
+
+
+
+
+
+
+
+function mapStateToProps(state){
+return {
+pickupAvailable:state.pickupAvailable};}
+
+
+
+var styles=StyleSheet.create({
+container:{},
+
+inputs:{
+flexDirection:"row",
+alignItems:"center",
+height:100,
+justifyContent:"center",
+transform:[{
+scale:1.4}]},
+
+
+inputText:{
+color:"#FFF",
+fontSize:16,
+paddingRight:8,
+paddingLeft:8,
+fontWeight:"200"},
+
+center:{
+alignSelf:"center"}});
+});
+__d('reactSkeleton/addBounty/bountyMapInputScreen.js',function(global, require, module, exports) {  'use strict';var _native=require('react-redux/native.js');var _addBounty=require('reactSkeleton/app/actions/addBounty.js');
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+
+var PromptScreen=require('reactSkeleton/shared/promptScreen.js');
+var MapWithCenterPin=require('reactSkeleton/shared/mapWithCenterPin.js');var 
+
+
+
+
+
+
+
+StyleSheet=
+
+
+React.StyleSheet;var TextInput=React.TextInput;var View=React.View;
+
+var timer;
+
+var PickupAvailableScreen=React.createClass({displayName:'PickupAvailableScreen',
+getInitialState:function(){
+return {
+region:{
+latitude:0,
+latitudeDelta:20,
+longitude:0,
+longitudeDelta:20,
+minDelta:0.3,
+firstLoadComplete:false,
+maxDelta:null},
+
+showsUserLocation:true};},
+
+
+componentWillUnmount:function(){
+clearTimeout(timer);},
+
+componentWillMount:function(){var _this=this;
+timer=setTimeout(function(){
+_this.setState({
+minDelta:null,
+firstLoadComplete:true});},
+
+
+5000);
+
+if(this.props.addBounty.data.location){
+console.log(this.props.addBounty.data.location);
+
+this.setState({
+region:{
+latitude:this.props.addBounty.data.location.latitude,
+longitude:this.props.addBounty.data.location.longitude,
+latitudeDelta:0,
+longitudeDelta:0},
+
+maxDelta:.04,
+showsUserLocation:false});}else 
+
+{
+
+
+navigator.geolocation.getCurrentPosition(
+function(position){
+_this.setState({
+region:{
+latitude:position.coords.latitude,
+longitude:position.coords.longitude,
+latitudeDelta:0,
+longitudeDelta:0},
+
+firstLoadComplete:true});});}},
+
+
+
+
+
+
+handleSubmit:function(){
+
+this.props.navigator.push({
+component:BountyLocationScreen});},
+
+
+
+handleAmountChange:function(amount){
+this.props.dispatch(setAmount(amount));},
+
+regionChange:function(reg){
+if(this.state.firstLoadComplete){
+this.setState({
+locationRegion:babelHelpers.extends({},
+this.state.region,{
+latitude:reg.latitude,
+longitude:reg.longitude})},
+
+function(){});
+
+
+
+this.props.dispatch((0,_addBounty.setLocation)({
+latitude:this.state.region.latitude,
+longitude:this.state.region.longitude}));}},
+
+
+
+
+
+render:function(){var _this2=this;
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(PromptScreen,{
+promptTitle:'Where will this need to be completed?',
+onSubmit:this.handleSubmit,
+screenTitle:"Add Bounty",
+onBackPress:function(){
+_this2.props.navigator.pop();}},
+
+
+React.createElement(MapWithCenterPin,{
+region:this.state.region,
+minDelta:this.state.minDelta,
+maxDelta:this.state.maxDelta,
+showsUserLocation:this.state.showsUserLocation,
+onRegionChangeComplete:this.regionChange}))));}});
+
+
+
+
+
+
+
+function mapStateToProps(state){
+return {
+addBounty:state.addBounty};}
+
+
+
+module.exports=(0,_native.connect)(mapStateToProps)(PickupAvailableScreen);
+
+var styles=StyleSheet.create({
+container:{
+flex:1},
+
+textInput:{
+color:"#FFF",
+height:40,
+backgroundColor:"#0587D4",
+padding:8,
+borderRadius:4,
+fontSize:16,
+width:150,
+alignSelf:"center",
+fontWeight:"200"}});
+});
+__d('reactSkeleton/shared/mapWithCenterPin.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var POIPin=require('reactSkeleton/shared/poiPin.js');var 
+
+
+Image=
+
+
+
+
+React.Image;var Dimensions=React.Dimensions;var MapView=React.MapView;var StyleSheet=React.StyleSheet;var View=React.View;
+
+var timer;
+
+module.exports=React.createClass({displayName:'exports',
+getInitialState:function(){
+return {
+pinReady:false};},
+
+
+componentWillUnmount:function(){
+clearTimeout(timer);},
+
+getDefaultProps:function(){
+return {
+showsUserLocation:true};},
+
+
+componentDidMount:function(){var _this=this;
+timer=setTimeout(function(){
+_this.setState({
+pinReady:true});},
+
+2000);},
+
+render:function(){
+var screenSize=Dimensions.get('window');
+
+var mapHeight=screenSize.height-300;
+var centerPinSize=35;
+
+if(this.state.pinReady){
+var pin=React.createElement(View,{
+style:{
+position:"absolute",
+left:screenSize.width/2-centerPinSize/2+1,
+top:mapHeight/2-centerPinSize/2-16,
+backgroundColor:"rgba(0,0,0,0)"}},
+
+React.createElement(POIPin,null));}
+
+
+
+return React.createElement(View,{style:styles.mapContainer},
+React.createElement(MapView,babelHelpers.extends({},
+this.props,{
+style:{
+height:mapHeight},
+
+showsUserLocation:this.props.showsUserLocation,
+showsCompass:true,
+legalLabelInsets:{
+bottom:6,
+right:6}})),
+
+pin);}});
+
+
+
+
+var styles=StyleSheet.create({});
+});
+__d('reactSkeleton/shared/poiPin.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');var 
+
+
+Image=
+
+
+
+
+React.Image;var Dimensions=React.Dimensions;var MapView=React.MapView;var StyleSheet=React.StyleSheet;var View=React.View;
+
+var timer;
+
+module.exports=React.createClass({displayName:'exports',
+getDefaultProps:function(){
+return {
+type:"default",
+size:35};},
+
+
+getInner:function(){
+switch(this.props.type){
+case "default":
+return React.createElement(View,{style:styles.dot});
+break;}},
+
+
+render:function(){
+return React.createElement(View,null,
+React.createElement(Image,{
+source:{
+uri:"map_poi.png"},
+
+resizeMode:"contain",
+style:[{
+width:this.props.size,
+height:this.props.size}]},
+
+React.createElement(View,{style:{
+position:"absolute",
+width:this.props.size,
+alignItems:"center",
+left:-.5,
+top:6}},
+
+this.getInner())));}});
+
+
+
+
+
+
+var styles=StyleSheet.create({
+dot:{
+backgroundColor:"#FFF",
+width:15,
+height:15,
+borderRadius:7.5}});
 });
 __d('reactSkeleton/shared/utils.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
 

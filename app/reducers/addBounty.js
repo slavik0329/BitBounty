@@ -1,6 +1,8 @@
 const initialState = {
     data: {
-        title: ""
+        title: "",
+        amount: null,
+        location: null
     }
 };
 
@@ -14,6 +16,23 @@ export default function main(state = initialState, action) {
                     title: action.title
                 }
     		}
+        case "SET_AMOUNT":
+            return {
+                ...state,
+                data: {
+                    ...state.data,
+                    amount: action.amount
+                }
+            }
+
+        case "SET_LOCATION":
+            return {
+                ...state,
+                data: {
+                    ...state.data,
+                    location: action.location
+                }
+            }
     }
 
     return state;

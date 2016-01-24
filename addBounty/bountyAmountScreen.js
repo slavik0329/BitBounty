@@ -3,10 +3,10 @@
 var React = require('react-native');
 
 var PromptScreen = require('../shared/promptScreen.js')
-// var PerishableScreen = require('./common/pickupAvailable/perishableScreen.js')
+var BountyLocationScreen = require('./bountyLocationScreen.js')
 
 import {connect} from 'react-redux/native'
-import {setServings} from './app/actions/addBounty'
+import {setAmount} from '../app/actions/addBounty'
 
 var {
   StyleSheet,
@@ -17,29 +17,26 @@ var {
 var PickupAvailableScreen = React.createClass({
   getInitialState() {
     return {
-      servings: ""
     };
   },
   componentDidMount(){
-    // setTimeout( ()=>{
-    //   this.refs.input.focus();
-    // }, 100)
+
   },
   handleSubmit(){
 
     this.props.navigator.push({
-      component: BountyAmountScreen
+      component: BountyLocationScreen
     });
     
   },
-  handleTitleChange(val) {
-
+  handleAmountChange(amount) {
+    this.props.dispatch(setAmount(amount))
   },
   render: function() {
     return (
       <View style={styles.container}>        
         <PromptScreen
-          promptTitle="Enter a title for your bounty request"
+          promptTitle="How much do you want to award for completion of this bounty?"
           onSubmit={this.handleSubmit}
           screenTitle={"Add Bounty"}
           onBackPress={()=>{
@@ -52,7 +49,8 @@ var PickupAvailableScreen = React.createClass({
             placeholderTextColor={"#0776B7"}
             clearTextOnFocus={true}
             autoFocus={true}
-            onChangeText={this.handleTitleChange}
+            value={this.props.addBounty.data.amount}
+            onChangeText={this.handleAmountChange}
             style={styles.textInput}/>
         </PromptScreen>  
       </View>
@@ -62,7 +60,7 @@ var PickupAvailableScreen = React.createClass({
 
 function mapStateToProps(state) {
   return {
-    pickupAvailable: state.pickupAvailable
+    addBounty: state.addBounty
   }
 }
 
