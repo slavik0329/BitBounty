@@ -14,10 +14,12 @@ var bountySchema = mongoose.Schema({
     notes: String,
     userId: String,
     username: String,
+    accepted: Boolean,
     requests:[{
         userId: String,
         time: Date,
-        rejected: Boolean
+        rejected: Boolean,
+        accepted: Boolean
     }],
 
 });

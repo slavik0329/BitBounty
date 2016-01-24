@@ -47,7 +47,9 @@ var StartScreen = React.createClass({
    renderRequest(request)  {
      return <BountyRequest
              navigator={this.props.navigator}
-             key={request.userId} 
+             key={request.userId}
+             request={request}
+             amount={this.props.bounty.amount}
              data={request}/>
    },
 

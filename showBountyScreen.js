@@ -9,7 +9,7 @@ var WideButton = require('./shared/wideButton.js');
 var BountyMapScreen = require('./bountyMapScreen.js');
 var ShowBountyRequestsScreen = require('./showBountyRequestsScreen.js');
 var API = require('./api.js');
-
+var BlurModal = require('./shared/blurModal.js');
 
 import {connect} from 'react-redux/native'
 // import {login, logout, menuChange} from './app/actions/main'
@@ -26,7 +26,8 @@ var {
 var StartScreen = React.createClass({
   getInitialState() {
       return {
-        requested: false
+        requested: false,
+        modalVisible: false
       };
   },
   componentDidMount () {
@@ -115,8 +116,19 @@ var StartScreen = React.createClass({
       return <View style={styles.spacer}></View>
     }
   },
+  releasePayment() {
+    this.setState({
+      modalVisible: true
+    })
+  },
   getBottomButton () {
     
+    if ( this.props.data.accepted ) {
+      return <WideButton 
+          onPress={this.releasePayment}
+          title="Release payment"/>
+    }
+
     if ( this.props.main.account._id == this.props.data.userId ) {
       return <WideButton 
           onPress={this.cancelRequest}
@@ -133,10 +145,35 @@ var StartScreen = React.createClass({
           title="Request to complete"/>
     }
   },
+  getModal() {
+    return <BlurModal 
+          visible={this.state.modalVisible}>
+          <View
+            style={styles.modalInner}>
+            <Text 
+              style={styles.modalText}>Sending transaction...</Text>
+
+              
+              
+              <WideButton
+                style={{
+                  marginTop: 20
+                }}
+                onPress={()=>{
+                  this.setState({
+                    modalVisible: false
+                  })
+                }} 
+                title={"Cancel"}/>
+
+          </View>
+        </BlurModal>
+  },
   render: function() {
 
     return (
       <View style={[styles.container]}>
+        {this.getModal()}
         <TopSpacer />
         <GoBack 
           onPress={()=>{
@@ -222,5 +259,21 @@ var styles = StyleSheet.create({
  },
  spacer: {
   height: 48
+ },
+ modalInner: {
+   backgroundColor: "#0079c0",
+   marginTop: 80,
+   padding: 15,
+   marginRight:15,
+   marginLeft:15,
+   borderRadius: 4
+ },
+ modalText: {
+   color: "#FFF",
+   textAlign: "center",
+   fontSize: 18
+ },
+ modalAmount: {
+   fontSize: 24
  }
 });
