@@ -4,6 +4,7 @@ var React = require('react-native');
 
 var PromptScreen = require('../shared/promptScreen.js')
 var API = require('../api.js')
+var HomeScreen = require('../homeScreen.js')
 
 // var BountyNotes = require('./bountyNotes.js')
 
@@ -33,7 +34,13 @@ var PickupAvailableScreen = React.createClass({
     //   component: BountyLocationScreen
     // });
     API.addBounty(this.props.addBounty.data, (res)=> {
-      console.log(res)
+      if ( this.props.addBounty.data.location ) {
+        this.props.navigator.popN(5)      
+      } else {
+        this.props.navigator.popN(4)      
+      }
+
+      
     })
 
     

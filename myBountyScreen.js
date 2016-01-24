@@ -23,9 +23,7 @@ var StartScreen = React.createClass({
   componentDidMount () {
    
   },
-
   render: function() {
-
     return (
       <View style={[styles.container]}>
         <TopSpacer />

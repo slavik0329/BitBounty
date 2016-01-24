@@ -131,6 +131,22 @@ module.exports = function(app, passport) {
         
     });
 
+    app.get('/getMyBountyRequests', function(req, res) {
+
+        Bounty.findOne(req.body.bountyId, function (err, bounty) {
+            if ( !bounty ) {
+                return false;
+            }
+
+            // var 
+
+
+
+        });
+
+        
+    });
+
     app.post('/setProfilePhoto', upload.any(), isLoggedIn,  function(req, res) {
  
 
@@ -254,12 +270,55 @@ module.exports = function(app, passport) {
         bounty.title = req.body.title;
         bounty.userId = req.user._id;
         bounty.username = req.user.local.username;
+        bounty.time = new Date();
 
-        bounty.save((bounty)=> {
-            res.json(bounty)
+        bounty.save((err,bounty)=> {
+            res.json({
+                ok: true
+            })
 
         });
         
+    });
+
+    app.post('/getBounty', isLoggedIn,  function(req, res) {
+        Bounty.findOne({
+            _id: req.body.bountyId
+        }, function (err, bounty) {
+            res.json({
+                bounty
+            })
+        })
+
+    });
+
+    app.post('/requestBounty', isLoggedIn,  function(req, res) {
+        Bounty.findOne({
+            _id: req.body.bountyId
+        }, function (err, bounty) {
+            var userFound = false;
+
+            bounty.requests.forEach( function(request) {
+                if ( request.userId == req.user._id ) {
+                    userFound = true;
+                }
+            });
+
+            if ( userFound ) {
+                return false;
+            }
+
+            bounty.requests.push({
+                userId: req.user._id,
+                time: new Date(),
+                rejected: false
+            })
+
+            bounty.save((err,bounty)=>{
+
+            });
+        })
+
     });
 
 

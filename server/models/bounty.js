@@ -13,7 +13,13 @@ var bountySchema = mongoose.Schema({
     time: Date,
     notes: String,
     userId: String,
-    username: String
+    username: String,
+    requests:[{
+        userId: String,
+        time: Date,
+        rejected: Boolean
+    }],
+
 });
 
 

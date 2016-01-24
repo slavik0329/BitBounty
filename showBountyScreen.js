@@ -7,6 +7,7 @@ var BorderButton = require('./shared/borderButton.js');
 var UserBountyHeader = require('./common/userBountyHeader.js');
 var WideButton = require('./shared/wideButton.js');
 var BountyMapScreen = require('./bountyMapScreen.js');
+var API = require('./api.js');
 
 
 import {connect} from 'react-redux/native'
@@ -28,7 +29,15 @@ var StartScreen = React.createClass({
       };
   },
   componentDidMount () {
-   
+    API.getBounty(this.props.data._id, (res) => {
+      res.bounty.requests.forEach((request)=>{
+        if ( request.userId == this.props.main.account._id ) {
+          this.setState({
+            requested:true
+          })
+        }
+      })
+    })
   },
   requestToComplete () {
     AlertIOS.alert(
@@ -37,6 +46,10 @@ var StartScreen = React.createClass({
       [
         {text: 'No', onPress: () => console.log('no Pressed!')},
         {text: 'Yes', onPress: () => {
+          API.requestBounty(this.props.data._id, (res)=>{
+            
+          })
+
           this.setState({
             requested: true
           })
@@ -83,6 +96,13 @@ var StartScreen = React.createClass({
     }
   },
   getBottomButton () {
+    
+    if ( this.props.main.account._id == this.props.data.userId ) {
+      return <WideButton 
+          onPress={this.cancelRequest}
+          title="Edit bounty"/>
+    }
+
     if ( this.state.requested ) {
       return <WideButton 
           onPress={this.cancelRequest}
@@ -107,7 +127,7 @@ var StartScreen = React.createClass({
           <View style={styles.top}>
             <UserBountyHeader 
               username={this.props.data.username}
-              bountyAmount={this.props.data.bountyAmount}
+              bountyAmount={this.props.data.amount}
               userImage={this.props.data.userImage}
             />
             <Text 
@@ -118,7 +138,7 @@ var StartScreen = React.createClass({
             automaticallyAdjustContentInsets={false}
             style={styles.scroll}>
           <Text 
-            style={styles.description}>{this.props.data.description}</Text>
+            style={styles.description}>{this.props.data.notes}</Text>
           </ScrollView>
 
 

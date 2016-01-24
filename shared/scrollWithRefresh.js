@@ -45,8 +45,7 @@ module.exports = React.createClass({
     return (
       <View style={styles.container}>
         
-        <LoadingBlock 
-          visible={loadingVisible}/>
+      
 
         <ListView 
           {...this.props}

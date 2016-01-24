@@ -37,7 +37,7 @@ module.exports = React.createClass({
         style={[styles.container]}>
 
         <UserBountyHeader 
-          bountyAmount={this.props.data.bountyAmount}
+          bountyAmount={this.props.data.amount}
           userImage={this.props.data.userImage}
           username={this.props.data.username}/>
         <View style={styles.bottom}>

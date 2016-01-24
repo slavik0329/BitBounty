@@ -64,17 +64,48 @@ module.exports = {
 			callback(err)
 		})
 	},
+	getMyBountyRequests: function (bountyId, callback) {
+		fetch('http://'+Globals.url+'/getMyBountyRequests', {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/x-www-form-urlencoded',
+		  },
+		  body: Serialize({
+		  	bountyId
+		  })
+		}).then( (res) => res.json() ).then( (res) => {
+			callback(res);
+		}).catch((err)=> {
+			callback(err)
+		})
+	},
+	getBounty: function (bountyId, callback) {
+		fetch('http://'+Globals.url+'/getBounty', {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/x-www-form-urlencoded',
+		  },
+		  body: Serialize({
+		  	bountyId
+		  })
+		}).then( (res) => res.json() ).then( (res) => {
+			callback(res);
+		}).catch((err)=> {
+			callback(err)
+		})
+	},
 	addBounty: function (bounty, callback) {
 		var data = { 
 		  	amount: parseFloat(bounty.amount),
-		  	notes: bounty.notes
+		  	notes: bounty.notes,
+		  	title: bounty.title
 		}
 
-		if ( data.location ) {
-			data.location = {
-				latitude: bounty.location.latitude,
-				longitude: bounty.location.longitude,
-			}
+		if ( bounty.location ) {
+			data.latitude = bounty.location.latitude;
+			data.longitude =  bounty.location.longitude;
 		}
 
 		fetch('http://'+Globals.url+'/addBounty', {
@@ -87,7 +118,6 @@ module.exports = {
 		}).then( (res) => res.json() ).then( (res) => {
 			callback(res);
 		}).catch((err)=> {
-			console.log(err)
 			callback(err)
 		})
 	},
@@ -116,9 +146,26 @@ module.exports = {
 		})
 
 	},
-	getBounties: function (page, callback) {
-		fetch("http://"+ Globals.url+"/feedBounties/"+page).then(res=>res.json()).then(res=>{
+	getBounties: function (page=1, callback) {
+		fetch("http://"+ Globals.url+"/bounties").then(res=>res.json()).then(res=>{
 			callback(res)
+		})
+	},
+	requestBounty: function (bountyId) {
+		fetch('http://'+Globals.url+'/requestBounty', {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/x-www-form-urlencoded',
+		  },
+		  body: Serialize({
+		  	bountyId
+		  })
+		}).then( (res) => res.json() ).then( (res) => {
+			callback(res);
+		}).catch((err)=> {
+			console.log(err)
+			callback(err)
 		})
 	}
 	
