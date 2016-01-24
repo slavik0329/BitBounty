@@ -167,7 +167,7 @@ var StartScreen = React.createClass({
 
     this.props.dispatch( login( {
       _id: user._id,
-      email: user.local.email,
+      email: user.local.email.trim(),
       username: user.local.username,
       userImage: user.image
       // userImage: "https://scontent-lga3-1.xx.fbcdn.net/hphotos-xpf1/v/t1.0-9/12509393_1070608089648598_9164631129840436749_n.jpg?oh=2634821f8d87055bdf235148c0736304&oe=57048AC4"

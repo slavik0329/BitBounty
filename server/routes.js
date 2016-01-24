@@ -130,6 +130,31 @@ module.exports = function(app, passport) {
 
         
     });
+    
+    app.get('/getMyBounties', isLoggedIn, function(req, res) {
+
+        Bounty.find({
+            userId: req.user._id
+        }, null, {
+
+        }).sort({
+            time: -1
+        }).exec(function (err,bounties) {
+            var userIds = bounties.map(function (bounty) {
+                return bounty.userId;
+            })
+
+            getImagesForIds(userIds, function (userImages) {
+                res.json({
+                    bounties: bounties,
+                    userImages: userImages
+                })
+            })
+           
+        });
+
+        
+    });
 
     app.get('/getMyBountyRequests', function(req, res) {
 
@@ -281,13 +306,29 @@ module.exports = function(app, passport) {
         
     });
 
+    app.post('/getUser', isLoggedIn,  function(req, res) {
+        User.findOne({
+            _id: req.body.userId
+        }, function (err, user) {
+            if ( user.image ) {
+                res.json({
+                    user: {
+                        image: user.image
+                    }
+                })
+            }
+
+        })
+        
+    });
+
     app.post('/getBounty', isLoggedIn,  function(req, res) {
         
         Bounty.findOne({
             _id: req.body.bountyId
         }, function (err, bounty) {
             res.json({
-                bounty:bounty
+                bounty: bounty
             })
         });
 

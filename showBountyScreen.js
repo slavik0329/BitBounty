@@ -126,6 +126,7 @@ var StartScreen = React.createClass({
         <View style={styles.block}>
           <View style={styles.top}>
             <UserBountyHeader 
+              userId={this.props.data.userId}
               username={this.props.data.username}
               bountyAmount={this.props.data.amount}
               userImage={this.props.data.userImage}

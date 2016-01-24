@@ -96,6 +96,22 @@ module.exports = {
 			callback(err)
 		})
 	},
+	getUser: function (userId, callback) {
+		fetch('http://'+Globals.url+'/getUser', {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/x-www-form-urlencoded',
+		  },
+		  body: Serialize({
+		  	userId
+		  })
+		}).then( (res) => res.json() ).then( (res) => {
+			callback(res);
+		}).catch((err)=> {
+			callback(err)
+		})
+	},
 	addBounty: function (bounty, callback) {
 		var data = { 
 		  	amount: parseFloat(bounty.amount),
@@ -115,6 +131,22 @@ module.exports = {
 		    'Content-Type': 'application/x-www-form-urlencoded',
 		  },
 		  body: Serialize(data)
+		}).then( (res) => res.json() ).then( (res) => {
+			callback(res);
+		}).catch((err)=> {
+			callback(err)
+		})
+	},
+	setUsername: function (username, callback) {
+		fetch('http://'+Globals.url+'/setusername', {
+		  method: 'POST',
+		  headers: {
+		    'Accept': 'application/json',
+		    'Content-Type': 'application/x-www-form-urlencoded',
+		  },
+		  body: Serialize({ // Serialize urlencodes the form data
+		  	username
+		  })
 		}).then( (res) => res.json() ).then( (res) => {
 			callback(res);
 		}).catch((err)=> {
@@ -148,6 +180,11 @@ module.exports = {
 	},
 	getBounties: function (page=1, callback) {
 		fetch("http://"+ Globals.url+"/bounties").then(res=>res.json()).then(res=>{
+			callback(res)
+		})
+	},
+	getMyBounties: function (callback) {
+		fetch("http://"+ Globals.url+"/getMyBounties").then(res=>res.json()).then(res=>{
 			callback(res)
 		})
 	},

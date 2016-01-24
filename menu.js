@@ -57,7 +57,7 @@ var Menu = React.createClass({
         <TopSpacer 
           backColor={"#0079c0"}/>
         <MenuItem 
-          title="My Bounties (2)"
+          title="My Bounties"
             onPress={this.handleBounties}
         />
         <MenuItem 

@@ -60516,7 +60516,7 @@ doLogin:function(user){
 
 this.props.dispatch((0,_main.login)({
 _id:user._id,
-email:user.local.email,
+email:user.local.email.trim(),
 username:user.local.username,
 userImage:user.image}));
 
@@ -62292,6 +62292,22 @@ catch(function(err){
 callback(err);});},
 
 
+setUsername:function(username,callback){
+fetch('http://'+Globals.url+'/setusername',{
+method:'POST',
+headers:{
+'Accept':'application/json',
+'Content-Type':'application/x-www-form-urlencoded'},
+
+body:Serialize({
+username:username})}).
+
+then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+callback(err);});},
+
+
 setProfilePhoto:function(imageURL,callback){
 var obj={
 uploadUrl:'http://'+Globals.url+'/setProfilePhoto',
@@ -62339,7 +62355,8 @@ console.log(err);
 callback(err);});}};
 });
 __d('reactSkeleton/globals.js',function(global, require, module, exports) {  module.exports={
-url:"localhost:8073"};
+
+url:"jotcube.com:8073"};
 });
 __d('reactSkeleton/lib/serialize.js',function(global, require, module, exports) {  module.exports=function(obj){
 var str=[];
