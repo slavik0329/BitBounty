@@ -133,16 +133,16 @@ module.exports = function(app, passport) {
 
     app.get('/getMyBountyRequests', function(req, res) {
 
-        Bounty.findOne(req.body.bountyId, function (err, bounty) {
-            if ( !bounty ) {
-                return false;
-            }
+        // Bounty.findOne(req.body.bountyId, function (err, bounty) {
+        //     if ( !bounty ) {
+        //         return false;
+        //     }
 
-            // var 
+        //     // var 
 
 
 
-        });
+        // });
 
         
     });
@@ -150,25 +150,25 @@ module.exports = function(app, passport) {
     app.post('/setProfilePhoto', upload.any(), isLoggedIn,  function(req, res) {
  
 
-            if ( req.files.length ) {
-                var dest = req.files[0].path.split("/")[1].split(".")[0] + "_resized.jpg";
+        if ( req.files.length ) {
+            var dest = req.files[0].path.split("/")[1].split(".")[0] + "_resized.jpg";
 
-                easyimg.resize({
-                  src:"uploads/"+req.files[0].path.split("/")[1], 
-                  dst: 'uploads/'+dest, 
-                  width:1080, 
-                  height:1920
-                }).then(function (file) {
+            easyimg.resize({
+              src:"uploads/"+req.files[0].path.split("/")[1], 
+              dst: 'uploads/'+dest, 
+              width:1080, 
+              height:1920
+            }).then(function (file) {
 
-                    req.user.image = dest;
-                    req.user.save();
-                    
-                    res.json({ok:true})
-                    
-                });
-            }
+                req.user.image = dest;
+                req.user.save();
+                
+                res.json({ok:true})
+                
+            });
+        }
 
-        });
+    });
 
 
     // app.post('/addFeedEvent', upload.any(), isLoggedIn,  function(req, res) {
@@ -272,7 +272,7 @@ module.exports = function(app, passport) {
         bounty.username = req.user.local.username;
         bounty.time = new Date();
 
-        bounty.save(function (err,bounty){
+        bounty.save(function (err,bounty) {
             res.json({
                 ok: true
             })
