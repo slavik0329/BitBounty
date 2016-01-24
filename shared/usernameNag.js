@@ -106,8 +106,6 @@ var styles = StyleSheet.create({
   button:{
     backgroundColor:"#5EADD0",
     marginTop: 10,
-
-
   },
   buttonText: {
     textAlign: "center",

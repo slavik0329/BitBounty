@@ -7,6 +7,7 @@ var BorderButton = require('./shared/borderButton.js');
 var UserBountyHeader = require('./common/userBountyHeader.js');
 var WideButton = require('./shared/wideButton.js');
 var BountyMapScreen = require('./bountyMapScreen.js');
+var ShowBountyRequestsScreen = require('./showBountyRequestsScreen.js');
 var API = require('./api.js');
 
 
@@ -95,6 +96,25 @@ var StartScreen = React.createClass({
       return <View style={styles.spacer}></View>
     }
   },
+  getRequestsButton() {
+    if ( this.props.data.requests.length ) {
+      return <BorderButton 
+        style={{
+           borderBottomWidth:0
+        }}
+        onPress={()=> {
+          this.props.navigator.push({
+            component: ShowBountyRequestsScreen,
+            passProps: {
+              bounty: this.props.data
+            }
+          })
+        }}
+        title={"Show Requests ("+ this.props.data.requests.length +")"}/>
+    } else {
+      return <View style={styles.spacer}></View>
+    }
+  },
   getBottomButton () {
     
     if ( this.props.main.account._id == this.props.data.userId ) {
@@ -145,6 +165,8 @@ var StartScreen = React.createClass({
 
         </View>
 
+        {this.getRequestsButton()}
+
         {this.getMapButton()}
 
         <BorderButton 
@@ -172,7 +194,7 @@ var styles = StyleSheet.create({
   padding:8
  },
  scroll: {
-  height: 354
+  height: 306
  },
  title :{
   fontSize: 18,

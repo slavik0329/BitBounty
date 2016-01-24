@@ -3,6 +3,8 @@
 var React = require('react-native');
 var GoBack = require('./shared/goBack.js');
 var TopSpacer = require('./shared/topSpacer.js');
+var BountyItem = require('./common/bountyItem.js');
+
 var API = require('./api.js');
 
 import {connect} from 'react-redux/native'
@@ -16,7 +18,7 @@ var {
   View,
 } = React;
 
-var StartScreen = React.createClass({
+var MyBountScreen = React.createClass({
   getInitialState() {
       var ds = new ListView.DataSource({
           rowHasChanged: (r1, r2) => r1 !== r2
@@ -33,7 +35,7 @@ var StartScreen = React.createClass({
   componentDidMount () {
     this.refresh();
 
-    
+
   },
   refresh() {
     API.getMyBounties( (res) => {
@@ -45,6 +47,13 @@ var StartScreen = React.createClass({
       })    
     } )
   },
+  renderBounty(bounty)  {
+    return <BountyItem 
+            userImages={this.state.userImages}
+            navigator={this.props.navigator}
+            key={bounty._id} 
+            data={bounty}/>
+  },
   render: function() {
     return (
       <View style={[styles.container]}>
@@ -54,7 +63,13 @@ var StartScreen = React.createClass({
             this.props.navigator.pop();
           }}
           title="My Bounties"/>
-        
+        <ListView 
+          dataSource={this.state.dataSource}
+          renderRow={this.renderBounty}
+          firstLoaded={this.state.firstLoaded}
+          automaticallyAdjustContentInsets={false}
+          isRefreshing={this.state.isRefreshing}
+          onRefresh={this.refresh}/>
       </View>
     );
   }
@@ -66,7 +81,7 @@ function mapStateToProps(state) {
   }
 }
 
-module.exports = connect(mapStateToProps)(StartScreen)
+module.exports = connect(mapStateToProps)(MyBountScreen)
 
 var styles = StyleSheet.create({
   container: {

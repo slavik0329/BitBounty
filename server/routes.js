@@ -313,7 +313,8 @@ module.exports = function(app, passport) {
             if ( user.image ) {
                 res.json({
                     user: {
-                        image: user.image
+                        image: user.image,
+                        username: user.local.username
                     }
                 })
             }
