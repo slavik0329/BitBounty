@@ -61546,6 +61546,7 @@ style:[styles.container]},
 React.createElement(UserBountyHeader,{
 bountyAmount:this.props.data.amount,
 userImage:this.props.data.userImage,
+userId:this.props.data.userId,
 username:this.props.data.username}),
 React.createElement(View,{style:styles.bottom},
 React.createElement(Text,{style:styles.title},this.props.data.title))));}});
@@ -61636,7 +61637,11 @@ var BorderButton=require('reactSkeleton/shared/borderButton.js');
 var UserBountyHeader=require('reactSkeleton/common/userBountyHeader.js');
 var WideButton=require('reactSkeleton/shared/wideButton.js');
 var BountyMapScreen=require('reactSkeleton/bountyMapScreen.js');
-var API=require('reactSkeleton/api.js');var 
+var ContactScreen=require('reactSkeleton/contactScreen.js');
+var ShowBountyRequestsScreen=require('reactSkeleton/showBountyRequestsScreen.js');
+var API=require('reactSkeleton/api.js');
+var BlurModal=require('reactSkeleton/shared/blurModal.js');
+var Spinner=require('react-native-spinkit/index.ios.js');var 
 
 
 
@@ -61654,7 +61659,9 @@ React.AlertIOS;var Dimensions=React.Dimensions;var ScrollView=React.ScrollView;v
 var StartScreen=React.createClass({displayName:'StartScreen',
 getInitialState:function(){
 return {
-requested:false};},
+requested:false,
+modalVisible:false,
+modalText:"Sending transaction..."};},
 
 
 componentDidMount:function(){var _this=this;
@@ -61724,7 +61731,64 @@ title:'View location on map'});}else
 return React.createElement(View,{style:styles.spacer});}},
 
 
+getRequestsButton:function(){var _this5=this;
+if(this.props.data.requests.length){
+return React.createElement(BorderButton,{
+style:{
+borderBottomWidth:0},
+
+onPress:function(){
+_this5.props.navigator.push({
+component:ShowBountyRequestsScreen,
+passProps:{
+bounty:_this5.props.data}});},
+
+
+
+title:"Show Requests ("+this.props.data.requests.length+")"});}else 
+{
+return React.createElement(View,{style:styles.spacer});}},
+
+
+releasePayment:function(){var _this6=this;
+AlertIOS.alert(
+'Confirm',
+'Are you sure you want to release this bounty?',
+[
+{text:'No',onPress:function(){return console.log('no Pressed!');}},
+{text:'Yes',onPress:function(){
+_this6.setState({
+modalVisible:true});
+
+
+setTimeout(function(){
+_this6.setState({
+modalText:"Payment Completed!"});
+
+
+setTimeout(function(){
+_this6.setState({
+modalVisible:false});
+
+
+_this6.props.navigator.pop();},
+1000);},
+
+
+3000);}}]);},
+
+
+
+
+
+
 getBottomButton:function(){
+
+if(this.props.data.accepted){
+return React.createElement(WideButton,{
+onPress:this.releasePayment,
+title:'Release payment'});}
+
 
 if(this.props.main.account._id==this.props.data.userId){
 return React.createElement(WideButton,{
@@ -61742,19 +61806,51 @@ onPress:this.requestToComplete,
 title:'Request to complete'});}},
 
 
-render:function(){var _this5=this;
+getModal:function(){var _this7=this;
+return React.createElement(BlurModal,{
+visible:this.state.modalVisible},
+React.createElement(View,{
+style:styles.modalInner},
+React.createElement(Text,{
+style:styles.modalText},this.state.modalText),
+React.createElement(Spinner,{
+style:styles.spinner,
+isVisible:true,
+size:80,
+type:"ChasingDots",
+color:"#FFAC44"}),
+
+
+React.createElement(WideButton,{
+style:{
+marginTop:20},
+
+onPress:function(){
+_this7.setState({
+modalVisible:false});},
+
+
+title:"Cancel"})));},
+
+
+
+
+render:function(){var _this8=this;
 
 return (
 React.createElement(View,{style:[styles.container]},
+this.getModal(),
 React.createElement(TopSpacer,null),
 React.createElement(GoBack,{
 onPress:function(){
-_this5.props.navigator.pop();},
+_this8.props.navigator.pop();},
 
 title:"View Bounty"}),
 React.createElement(View,{style:styles.block},
 React.createElement(View,{style:styles.top},
 React.createElement(UserBountyHeader,{
+inProgress:this.props.data.accepted,
+userId:this.props.data.userId,
 username:this.props.data.username,
 bountyAmount:this.props.data.amount,
 userImage:this.props.data.userImage}),
@@ -61773,9 +61869,19 @@ style:styles.description},this.props.data.notes))),
 
 
 
+this.getRequestsButton(),
+
 this.getMapButton(),
 
 React.createElement(BorderButton,{
+onPress:function(){
+_this8.props.navigator.push({
+component:ContactScreen,
+passProps:{
+bounty:_this8.props.data}});},
+
+
+
 title:"Contact "+this.props.data.username}),
 
 this.getBottomButton()));}});
@@ -61800,7 +61906,7 @@ block:{
 padding:8},
 
 scroll:{
-height:354},
+height:306},
 
 title:{
 fontSize:18,
@@ -61827,7 +61933,27 @@ color:"#666",
 fontSize:16},
 
 spacer:{
-height:48}});
+height:48},
+
+modalInner:{
+backgroundColor:"#0079c0",
+marginTop:80,
+padding:15,
+marginRight:15,
+marginLeft:15,
+borderRadius:4},
+
+modalText:{
+color:"#FFF",
+textAlign:"center",
+fontSize:18},
+
+modalAmount:{
+fontSize:24},
+
+spinner:{
+margin:26,
+alignSelf:"center"}});
 });
 __d('reactSkeleton/shared/goBack.js',function(global, require, module, exports) {  'use strict';
 
@@ -61990,7 +62116,8 @@ __d('reactSkeleton/common/userBountyHeader.js',function(global, require, module,
 
 var React=require('react-native/Libraries/react-native/react-native.js');
 var TimeAgo=require('reactSkeleton/shared/timeAgo.js');var _require=
-require('react-native-icons/index.ios.js');var Icon=_require.Icon;var 
+require('react-native-icons/index.ios.js');var Icon=_require.Icon;
+var API=require('reactSkeleton/api.js');var 
 
 
 Image=
@@ -62000,22 +62127,32 @@ Image=
 React.Image;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;
 
 module.exports=React.createClass({displayName:'exports',
-getDefaultProps:function(){
+getInitialState:function(){
 return {
-userImage:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH8AAAB/CAMAAADxY+0hAAAAJ1BMVEX////Z2dnW1tb6+vrz8/Pp6enj4+Pv7+/f39/29vbc3Nzs7Ozm5uaaVhUjAAACxElEQVRoge2a23aEMAhFJ3dv//+9zVhtraMJMAez2nqW75sQAiT4eNy6devWL5PzPo1hmkIYve8vZqc4GGNt/mYZY4bg3UXwsTNP4l52iBe4wUV7BF9NSMr46Ry+WOAV6X4o02dNavhUWfzigk4pEEcSPmtQMSBQ8VkKBpBXP3sAjnccvLERze84+GwA+BjSQn8rLJ9LN3ZE4vnLx4Ygc/dnBwAjoOfjjQEeAdbZXwXMggL3Z+G6AREedwKciI8rxKLwAwagl/G7v8IX7j/M/zK+DSh+6/P3oLS9r3xcAYgiB+DyH6f1/BIw/3sJH3b82tdfJwlA5D1MwLfIq7DgAFjkHSjw+cg7mJM0QED/d5Lzh8t/ouMPTACy9ItLwEI8LAJk7scVYOHyYRlIVP6zUAegdfyJrn8G9wTRuv8W9p+4BCy7f8Pw9Wfng9UD28+sxOVH9BNoZLlA4RWekYWgvdcqTg+k8QDO6AKArf+3GLdgnREIOQBUtj8nATJfZwDTUwNAZfsf5A1Qcj+9DCjhiXVQbfnERgA++tmI8hCiOgavtoJWeQZeuYmi514vqswB9YbPq8plUP8fiOJblFbm26hUBq2++4tJCPjkfKri+hvzLwj/cvxp5t5FxRpwQfyXi7A+v1wB9P+AKi4fO/U/UuVPAPyPJzs1rn/VS5DuCagPInQjgHAJ12yAaG8AagZQX2F0DHDkFxCVG4A//OnzxAB4HaQv/tMA5PQl0/kDWNvBMpELDNdvFCEWuElGx/jA8/b9xQIT3rgR9ELH75wgC0WXjn+zlmhiZyQfYXDz3IZuZOyDGwcgfDHBUo+DF01bKSaYuhNckg67aBaUf9F3Ae/4vc5zwhuZhqOzrMSfsQAtEFSYtywYfsZB0t/3vTYDImZxR2nNy+zZFkjLT/JtFv+pvi3+OadrSc+6+Tf/5t/8/8r/ABcwIoa2idwgAAAAAElFTkSuQmCC"};},
+userImage:null,
+username:null};},
 
 
-render:function(){
+componentDidMount:function(){var _this=this;
+API.getUser(this.props.userId,function(res){
+if(res.user.image){
 
-return (
-React.createElement(View,{style:[styles.top,this.props.style]},
-React.createElement(View,{style:styles.userInfo},
-React.createElement(Image,{
-source:{uri:this.props.userImage},
-style:styles.userImage}),
-React.createElement(Text,{style:styles.usernameText},this.props.username)),
+_this.setState({
+userImage:res.user.image,
+username:res.user.username});}else 
 
-React.createElement(View,{style:styles.bountyAmount},
+{
+
+_this.setState({
+userImage:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH8AAAB/CAMAAADxY+0hAAAAJ1BMVEX////Z2dnW1tb6+vrz8/Pp6enj4+Pv7+/f39/29vbc3Nzs7Ozm5uaaVhUjAAACxElEQVRoge2a23aEMAhFJ3dv//+9zVhtraMJMAez2nqW75sQAiT4eNy6devWL5PzPo1hmkIYve8vZqc4GGNt/mYZY4bg3UXwsTNP4l52iBe4wUV7BF9NSMr46Ry+WOAV6X4o02dNavhUWfzigk4pEEcSPmtQMSBQ8VkKBpBXP3sAjnccvLERze84+GwA+BjSQn8rLJ9LN3ZE4vnLx4Ygc/dnBwAjoOfjjQEeAdbZXwXMggL3Z+G6AREedwKciI8rxKLwAwagl/G7v8IX7j/M/zK+DSh+6/P3oLS9r3xcAYgiB+DyH6f1/BIw/3sJH3b82tdfJwlA5D1MwLfIq7DgAFjkHSjw+cg7mJM0QED/d5Lzh8t/ouMPTACy9ItLwEI8LAJk7scVYOHyYRlIVP6zUAegdfyJrn8G9wTRuv8W9p+4BCy7f8Pw9Wfng9UD28+sxOVH9BNoZLlA4RWekYWgvdcqTg+k8QDO6AKArf+3GLdgnREIOQBUtj8nATJfZwDTUwNAZfsf5A1Qcj+9DCjhiXVQbfnERgA++tmI8hCiOgavtoJWeQZeuYmi514vqswB9YbPq8plUP8fiOJblFbm26hUBq2++4tJCPjkfKri+hvzLwj/cvxp5t5FxRpwQfyXi7A+v1wB9P+AKi4fO/U/UuVPAPyPJzs1rn/VS5DuCagPInQjgHAJ12yAaG8AagZQX2F0DHDkFxCVG4A//OnzxAB4HaQv/tMA5PQl0/kDWNvBMpELDNdvFCEWuElGx/jA8/b9xQIT3rgR9ELH75wgC0WXjn+zlmhiZyQfYXDz3IZuZOyDGwcgfDHBUo+DF01bKSaYuhNckg67aBaUf9F3Ae/4vc5zwhuZhqOzrMSfsQAtEFSYtywYfsZB0t/3vTYDImZxR2nNy+zZFkjLT/JtFv+pvi3+OadrSc+6+Tf/5t/8/8r/ABcwIoa2idwgAAAAAElFTkSuQmCC"});}});},
+
+
+
+
+
+getBountyAmount:function(){
+if(this.props.bountyAmount){
+return React.createElement(View,{style:styles.bountyAmount},
 React.createElement(Icon,{
 name:"fontawesome|bitcoin",
 size:20,
@@ -62027,8 +62164,27 @@ marginRight:4,
 top:2}]}),
 
 
-React.createElement(Text,{style:styles.bountyAmountText},this.props.bountyAmount))));}});
+React.createElement(Text,{style:styles.bountyAmountText},this.props.bountyAmount));}},
 
+
+
+getStatus:function(){
+if(this.props.inProgress){
+return React.createElement(Text,{style:styles.progressText},'In Progress');}},
+
+
+render:function(){
+
+return (
+React.createElement(View,{style:[styles.top,this.props.style]},
+React.createElement(View,{style:styles.userInfo},
+React.createElement(Image,{
+source:{uri:this.state.userImage},
+style:styles.userImage}),
+React.createElement(Text,{style:styles.usernameText},this.state.username)),
+
+this.getStatus(),
+this.getBountyAmount()));}});
 
 
 
@@ -62074,100 +62230,13 @@ flexDirection:"row"},
 bountyAmountText:{
 fontSize:20,
 color:"#E26648",
-left:-4}});
-});
-__d('reactSkeleton/shared/wideButton.js',function(global, require, module, exports) {  'use strict';
+left:-4},
 
-var React=require('react-native/Libraries/react-native/react-native.js');var 
-
-
-StyleSheet=
-
-
-
-React.StyleSheet;var Text=React.Text;var TouchableOpacity=React.TouchableOpacity;var View=React.View;
-
-module.exports=React.createClass({displayName:'exports',
-render:function(){
-return (
-React.createElement(TouchableOpacity,{
-style:[styles.container,this.props.style],
-onPress:this.props.onPress},
-React.createElement(Text,{
-style:styles.text},this.props.title)));}});
-
-
-
-
-
-var styles=StyleSheet.create({
-container:{
-height:50,
-backgroundColor:"#5EADD0",
-marginTop:0},
-
-text:{
-color:"#FFF",
-textAlign:"center",
-fontSize:20,
-lineHeight:37}});
-});
-__d('reactSkeleton/bountyMapScreen.js',function(global, require, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');
-var GoBack=require('reactSkeleton/shared/goBack.js');
-var TopSpacer=require('reactSkeleton/shared/topSpacer.js');var 
-
-
-Dimensions=
-
-
-
-
-
-React.Dimensions;var MapView=React.MapView;var ScrollView=React.ScrollView;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;
-
-module.exports=React.createClass({displayName:'exports',
-getInitialState:function(){
-return {};},
-
-
-
-componentDidMount:function(){},
-
-
-render:function(){var _this=this;
-
-return (
-React.createElement(View,{style:[styles.container]},
-React.createElement(TopSpacer,null),
-React.createElement(GoBack,{
-onPress:function(){
-_this.props.navigator.pop();},
-
-title:"View Location"}),
-
-React.createElement(MapView,{
-region:this.props.region,
-legalLabelInsets:{
-bottom:6,
-right:6},
-
-annotations:[
-this.props.region],
-
-style:styles.map})));}});
-
-
-
-
-
-var styles=StyleSheet.create({
-container:{
-flex:1},
-
-map:{
-flex:1}});
+progressText:{
+color:"green",
+position:"absolute",
+top:12,
+left:140}});
 });
 __d('reactSkeleton/api.js',function(global, require, module, exports) {  var Globals=require("reactSkeleton/globals.js");
 var Serialize=require("reactSkeleton/lib/serialize.js");
@@ -62267,6 +62336,22 @@ catch(function(err){
 callback(err);});},
 
 
+getUser:function(userId,callback){
+fetch('http://'+Globals.url+'/getUser',{
+method:'POST',
+headers:{
+'Accept':'application/json',
+'Content-Type':'application/x-www-form-urlencoded'},
+
+body:Serialize({
+userId:userId})}).
+
+then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+callback(err);});},
+
+
 addBounty:function(bounty,callback){
 var data={
 amount:parseFloat(bounty.amount),
@@ -62338,6 +62423,11 @@ fetch("http://"+Globals.url+"/bounties").then(function(res){return res.json();})
 callback(res);});},
 
 
+getMyBounties:function(callback){
+fetch("http://"+Globals.url+"/getMyBounties").then(function(res){return res.json();}).then(function(res){
+callback(res);});},
+
+
 requestBounty:function(bountyId){
 fetch('http://'+Globals.url+'/requestBounty',{
 method:'POST',
@@ -62365,6 +62455,591 @@ if(obj.hasOwnProperty(p)){
 str.push(encodeURIComponent(p)+"="+encodeURIComponent(obj[p]));}}
 
 return str.join("&");};
+});
+__d('reactSkeleton/shared/wideButton.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');var 
+
+
+StyleSheet=
+
+
+
+React.StyleSheet;var Text=React.Text;var TouchableOpacity=React.TouchableOpacity;var View=React.View;
+
+module.exports=React.createClass({displayName:'exports',
+render:function(){
+return (
+React.createElement(TouchableOpacity,{
+style:[styles.container,this.props.style],
+onPress:this.props.onPress},
+React.createElement(Text,{
+style:styles.text},this.props.title)));}});
+
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+height:50,
+backgroundColor:"#5EADD0",
+marginTop:0},
+
+text:{
+color:"#FFF",
+textAlign:"center",
+fontSize:20,
+lineHeight:37}});
+});
+__d('reactSkeleton/bountyMapScreen.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var GoBack=require('reactSkeleton/shared/goBack.js');
+var TopSpacer=require('reactSkeleton/shared/topSpacer.js');var 
+
+
+Dimensions=
+
+
+
+
+
+React.Dimensions;var MapView=React.MapView;var ScrollView=React.ScrollView;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;
+
+module.exports=React.createClass({displayName:'exports',
+getInitialState:function(){
+return {};},
+
+
+
+componentDidMount:function(){},
+
+
+render:function(){var _this=this;
+
+return (
+React.createElement(View,{style:[styles.container]},
+React.createElement(TopSpacer,null),
+React.createElement(GoBack,{
+onPress:function(){
+_this.props.navigator.pop();},
+
+title:"View Location"}),
+
+React.createElement(MapView,{
+region:this.props.region,
+legalLabelInsets:{
+bottom:6,
+right:6},
+
+annotations:[
+this.props.region],
+
+style:styles.map})));}});
+
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+flex:1},
+
+map:{
+flex:1}});
+});
+__d('reactSkeleton/contactScreen.js',function(global, require, module, exports) {  'use strict';var _native=require('react-redux/native.js');
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var GoBack=require('reactSkeleton/shared/goBack.js');
+var TopSpacer=require('reactSkeleton/shared/topSpacer.js');
+var BorderButton=require('reactSkeleton/shared/borderButton.js');
+var UserBountyHeader=require('reactSkeleton/common/userBountyHeader.js');
+var WideButton=require('reactSkeleton/shared/wideButton.js');
+var BountyMapScreen=require('reactSkeleton/bountyMapScreen.js');
+var ContactScreen=require('reactSkeleton/contactScreen.js');
+var ShowBountyRequestsScreen=require('reactSkeleton/showBountyRequestsScreen.js');
+var API=require('reactSkeleton/api.js');
+var BlurModal=require('reactSkeleton/shared/blurModal.js');
+var Spinner=require('react-native-spinkit/index.ios.js');var 
+
+
+
+
+
+
+AlertIOS=
+
+
+
+
+
+
+React.AlertIOS;var Dimensions=React.Dimensions;var Image=React.Image;var ScrollView=React.ScrollView;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;
+
+var StartScreen=React.createClass({displayName:'StartScreen',
+getInitialState:function(){
+return {};},
+
+
+
+
+render:function(){var _this=this;
+
+return (
+React.createElement(View,{style:[styles.container]},
+React.createElement(TopSpacer,null),
+React.createElement(GoBack,{
+onPress:function(){
+_this.props.navigator.pop();},
+
+title:"Contact "+this.props.bounty.username}),
+React.createElement(View,{style:styles.block},
+React.createElement(Text,{style:styles.usernameText},'Slavik '),
+React.createElement(Image,{
+style:{
+width:200,
+height:200,
+left:15,
+top:15,
+borderRadius:8},
+
+source:{uri:"data:image/jpeg;base64,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"}})),
+
+
+
+
+React.createElement(View,{style:styles.bottomBar},
+React.createElement(Text,{style:styles.addPhoto},'Add Photo'))));}});
+
+
+
+
+
+
+function mapStateToProps(state){
+return {
+main:state.main};}
+
+
+
+module.exports=(0,_native.connect)(mapStateToProps)(StartScreen);
+
+var styles=StyleSheet.create({
+container:{
+flex:1},
+
+usernameText:{
+color:"#1b7eaa",
+fontWeight:"600",
+fontSize:14,
+left:14,
+top:8},
+
+bottomBar:{
+position:"absolute",
+height:40,
+bottom:0,
+width:350,
+justifyContent:"center",
+borderTopWidth:1,
+borderTopColor:"#DDD",
+padding:10},
+
+addPhoto:{
+fontSize:16,
+fontWeight:"bold",
+color:"#666"}});
+});
+__d('reactSkeleton/showBountyRequestsScreen.js',function(global, require, module, exports) {  'use strict';var _native=require('react-redux/native.js');
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var GoBack=require('reactSkeleton/shared/goBack.js');
+var TopSpacer=require('reactSkeleton/shared/topSpacer.js');
+var WideButton=require('reactSkeleton/shared/wideButton.js');
+var BountyRequest=require('reactSkeleton/common/bountyRequest.js');
+var API=require('reactSkeleton/api.js');var 
+
+
+
+
+
+
+AlertIOS=
+
+
+
+
+
+React.AlertIOS;var Dimensions=React.Dimensions;var ListView=React.ListView;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;
+
+var StartScreen=React.createClass({displayName:'StartScreen',
+getInitialState:function(){
+var ds=new ListView.DataSource({
+rowHasChanged:function(r1,r2){return r1!==r2;}});
+
+
+return {
+isRefreshing:false,
+dataSource:ds.cloneWithRows([]),
+firstLoaded:false};},
+
+
+componentDidMount:function(){
+this.refresh();},
+
+
+
+refresh:function(){
+this.setState({
+dataSource:this.state.dataSource.cloneWithRows(this.props.bounty.requests),
+isRefreshing:false,
+firstLoaded:true});},
+
+
+renderRequest:function(request){
+return React.createElement(BountyRequest,{
+navigator:this.props.navigator,
+key:request.userId,
+request:request,
+amount:this.props.bounty.amount,
+data:request});},
+
+
+render:function(){var _this=this;
+
+return (
+React.createElement(View,{style:[styles.container]},
+React.createElement(TopSpacer,null),
+React.createElement(GoBack,{
+onPress:function(){
+_this.props.navigator.pop();},
+
+title:"View Requests"}),
+React.createElement(ListView,{
+dataSource:this.state.dataSource,
+renderRow:this.renderRequest,
+firstLoaded:this.state.firstLoaded,
+automaticallyAdjustContentInsets:false,
+isRefreshing:this.state.isRefreshing,
+onRefresh:this.refresh})));}});
+
+
+
+
+
+
+
+function mapStateToProps(state){
+return {
+main:state.main};}
+
+
+
+module.exports=(0,_native.connect)(mapStateToProps)(StartScreen);
+
+var styles=StyleSheet.create({
+container:{
+flex:1}});
+});
+__d('reactSkeleton/common/bountyRequest.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var BlurModal=require('reactSkeleton/shared/blurModal.js');
+var WideButton=require('reactSkeleton/shared/wideButton.js');
+var ShowBountyScreen=require('reactSkeleton/showBountyScreen.js');
+var UserBountyHeader=require('reactSkeleton/common/userBountyHeader.js');var _require=
+require('react-native-icons/index.ios.js');var Icon=_require.Icon;var 
+
+
+Dimensions=
+
+
+
+
+
+React.Dimensions;var Image=React.Image;var StyleSheet=React.StyleSheet;var TouchableOpacity=React.TouchableOpacity;var Text=React.Text;var View=React.View;
+
+module.exports=React.createClass({displayName:'exports',
+getInitialState:function(){
+return {
+modalVisible:false};},
+
+
+getDefaultProps:function(){
+return {
+image:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH8AAAB/CAMAAADxY+0hAAAAJ1BMVEX////Z2dnW1tb6+vrz8/Pp6enj4+Pv7+/f39/29vbc3Nzs7Ozm5uaaVhUjAAACxElEQVRoge2a23aEMAhFJ3dv//+9zVhtraMJMAez2nqW75sQAiT4eNy6devWL5PzPo1hmkIYve8vZqc4GGNt/mYZY4bg3UXwsTNP4l52iBe4wUV7BF9NSMr46Ry+WOAV6X4o02dNavhUWfzigk4pEEcSPmtQMSBQ8VkKBpBXP3sAjnccvLERze84+GwA+BjSQn8rLJ9LN3ZE4vnLx4Ygc/dnBwAjoOfjjQEeAdbZXwXMggL3Z+G6AREedwKciI8rxKLwAwagl/G7v8IX7j/M/zK+DSh+6/P3oLS9r3xcAYgiB+DyH6f1/BIw/3sJH3b82tdfJwlA5D1MwLfIq7DgAFjkHSjw+cg7mJM0QED/d5Lzh8t/ouMPTACy9ItLwEI8LAJk7scVYOHyYRlIVP6zUAegdfyJrn8G9wTRuv8W9p+4BCy7f8Pw9Wfng9UD28+sxOVH9BNoZLlA4RWekYWgvdcqTg+k8QDO6AKArf+3GLdgnREIOQBUtj8nATJfZwDTUwNAZfsf5A1Qcj+9DCjhiXVQbfnERgA++tmI8hCiOgavtoJWeQZeuYmi514vqswB9YbPq8plUP8fiOJblFbm26hUBq2++4tJCPjkfKri+hvzLwj/cvxp5t5FxRpwQfyXi7A+v1wB9P+AKi4fO/U/UuVPAPyPJzs1rn/VS5DuCagPInQjgHAJ12yAaG8AagZQX2F0DHDkFxCVG4A//OnzxAB4HaQv/tMA5PQl0/kDWNvBMpELDNdvFCEWuElGx/jA8/b9xQIT3rgR9ELH75wgC0WXjn+zlmhiZyQfYXDz3IZuZOyDGwcgfDHBUo+DF01bKSaYuhNckg67aBaUf9F3Ae/4vc5zwhuZhqOzrMSfsQAtEFSYtywYfsZB0t/3vTYDImZxR2nNy+zZFkjLT/JtFv+pvi3+OadrSc+6+Tf/5t/8/8r/ABcwIoa2idwgAAAAAElFTkSuQmCC"};},
+
+
+handlePress:function(){
+this.props.navigator.push({
+component:ShowBountyScreen,
+passProps:{
+data:this.props.data}});},
+
+
+
+handleAccept:function(){
+this.setState({
+modalVisible:true});},
+
+
+getAcceptButton:function(){
+if(this.props.request.accepted){
+return React.createElement(TouchableOpacity,{
+onPress:this.handleAccept,
+style:styles.button},
+React.createElement(Text,{
+style:styles.buttonText},'Finalize'));}else 
+
+
+
+{
+return React.createElement(TouchableOpacity,{
+onPress:this.handleAccept,
+style:styles.button},
+React.createElement(Text,{
+style:styles.buttonText},'Accept'));}},
+
+
+
+
+
+render:function(){var _this=this;
+
+return (
+React.createElement(View,{
+style:[styles.container]},
+React.createElement(BlurModal,{
+visible:this.state.modalVisible},
+React.createElement(View,{
+style:styles.modalInner},
+React.createElement(Text,{
+style:styles.modalText},'Send ',React.createElement(Text,{style:styles.modalAmount},'(฿',this.props.amount,')'),' to 3J26aNwBeUtvDzCiLLy9MMWL1AnQQHonUs'),
+
+React.createElement(Image,{
+source:{
+uri:"http://chart.apis.google.com/chart?cht=qr&chs=500x500&chl=3J26aNwBeUtvDzCiLLy9MMWL1AnQQHonUs&chld=H|0"},
+
+style:{
+width:300,
+height:300,
+alignSelf:"center",
+marginTop:20}}),
+
+
+React.createElement(WideButton,{
+style:{
+marginTop:20},
+
+onPress:function(){
+_this.setState({
+modalVisible:false});},
+
+
+title:"Cancel"}))),
+
+
+
+React.createElement(UserBountyHeader,{
+userId:this.props.data.userId}),
+
+this.getAcceptButton()));}});
+
+
+
+
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+backgroundColor:"#FFFFFF",
+padding:8,
+borderColor:"#eee",
+borderBottomWidth:1},
+
+bottom:{
+marginTop:4},
+
+title:{
+fontSize:16,
+color:"#555",
+fontWeight:"500"},
+
+button:{
+padding:8,
+backgroundColor:"5EADD0",
+justifyContent:"center",
+alignItems:"center",
+width:100,
+borderRadius:4,
+marginTop:6,
+position:"absolute",
+top:6,
+right:8},
+
+buttonText:{
+color:"#FFF"},
+
+modalInner:{
+backgroundColor:"#0079c0",
+marginTop:80,
+padding:15,
+marginRight:15,
+marginLeft:15,
+borderRadius:4},
+
+modalText:{
+color:"#FFF",
+textAlign:"center",
+fontSize:18},
+
+modalAmount:{
+fontSize:24}});
+});
+__d('reactSkeleton/shared/blurModal.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');var _require=
+require('react-native-blur/index.js');var BlurView=_require.BlurView;var VibrancyView=_require.VibrancyView;var 
+
+
+Dimensions=
+
+
+React.Dimensions;var Modal=React.Modal;var View=React.View;
+
+module.exports=React.createClass({displayName:'exports',
+getInitialState:function(){
+return {};},
+
+
+
+getDefaultProps:function(){
+return {};},
+
+
+render:function(){
+
+return (
+React.createElement(Modal,{
+animated:true,
+transparent:true,
+visible:this.props.visible},
+React.createElement(BlurView,{blurType:'light'},
+React.createElement(View,{style:{
+height:Dimensions.get("window").height}},
+
+this.props.children))));}});
+});
+__d('react-native-blur/index.js',function(global, require, module, exports) {  var BlurView=require('react-native-blur/src/BlurView.js');
+var VibrancyView=require('react-native-blur/src/VibrancyView.js');
+
+module.exports={
+BlurView:BlurView,
+VibrancyView:VibrancyView};
+});
+__d('react-native-blur/src/BlurView.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
+
+requireNativeComponent=
+
+React.requireNativeComponent;var Component=React.Component;var 
+
+BlurView=function(_Component){babelHelpers.inherits(BlurView,_Component);function BlurView(){babelHelpers.classCallCheck(this,BlurView);return babelHelpers.possibleConstructorReturn(this,Object.getPrototypeOf(BlurView).apply(this,arguments));}babelHelpers.createClass(BlurView,[{key:'render',value:function render()
+{
+return (
+React.createElement(NativeBlurView,babelHelpers.extends({},
+this.props,{
+style:[{
+backgroundColor:'transparent'},
+this.props.style]})));}}]);return BlurView;}(Component);
+
+
+
+
+
+
+BlurView.propTypes={
+blurType:React.PropTypes.string};
+
+
+var NativeBlurView=requireNativeComponent('BlurView',BlurView);
+
+module.exports=BlurView;
+});
+__d('react-native-blur/src/VibrancyView.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
+
+requireNativeComponent=
+
+React.requireNativeComponent;var Component=React.Component;var 
+
+VibrancyView=function(_Component){babelHelpers.inherits(VibrancyView,_Component);function VibrancyView(){babelHelpers.classCallCheck(this,VibrancyView);return babelHelpers.possibleConstructorReturn(this,Object.getPrototypeOf(VibrancyView).apply(this,arguments));}babelHelpers.createClass(VibrancyView,[{key:'render',value:function render()
+{
+return (
+React.createElement(NativeVibrancyView,babelHelpers.extends({},
+this.props,{
+style:[{
+backgroundColor:'transparent'},
+this.props.style]})));}}]);return VibrancyView;}(Component);
+
+
+
+
+
+
+VibrancyView.propTypes={
+blurType:React.PropTypes.string};
+
+
+var NativeVibrancyView=requireNativeComponent('VibrancyView',VibrancyView);
+
+module.exports=VibrancyView;
+});
+__d('react-native-spinkit/index.ios.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
+
+PropTypes=
+
+
+React.PropTypes;var requireNativeComponent=React.requireNativeComponent;var View=React.View;
+
+var Spinkit=React.createClass({displayName:'Spinkit',
+propTypes:{
+type:PropTypes.string,
+color:PropTypes.string,
+size:PropTypes.number,
+isVisible:PropTypes.bool},
+
+
+getDefaultProps:function(){
+return {
+size:37,
+color:"#000000",
+isVisible:true};},
+
+
+
+render:function(){
+var size={height:this.props.size,width:this.props.size};
+
+if(!this.props.isVisible)return React.createElement(View,null);
+return (
+React.createElement(RNSpinkit,{
+type:this.props.type,
+size:this.props.size,
+color:this.props.color,
+style:[size,this.props.style]}));}});
+
+
+
+
+
+
+var RNSpinkit=requireNativeComponent('RNSpinkit',Spinkit);
+
+
+module.exports=Spinkit;
 });
 __d('reactSkeleton/shared/scrollWithRefresh.js',function(global, require, module, exports) {  'use strict';
 
@@ -63450,110 +64125,11 @@ button:{
 backgroundColor:"#5EADD0",
 marginTop:10},
 
-
-
 buttonText:{
 textAlign:"center",
 fontSize:20,
 color:"#FFF",
 padding:10}});
-});
-__d('reactSkeleton/shared/blurModal.js',function(global, require, module, exports) {  'use strict';
-
-var React=require('react-native/Libraries/react-native/react-native.js');var _require=
-require('react-native-blur/index.js');var BlurView=_require.BlurView;var VibrancyView=_require.VibrancyView;var 
-
-
-Dimensions=
-
-
-React.Dimensions;var Modal=React.Modal;var View=React.View;
-
-module.exports=React.createClass({displayName:'exports',
-getInitialState:function(){
-return {};},
-
-
-
-getDefaultProps:function(){
-return {};},
-
-
-render:function(){
-
-return (
-React.createElement(Modal,{
-animated:true,
-transparent:true,
-visible:this.props.visible},
-React.createElement(BlurView,{blurType:'light'},
-React.createElement(View,{style:{
-height:Dimensions.get("window").height}},
-
-this.props.children))));}});
-});
-__d('react-native-blur/index.js',function(global, require, module, exports) {  var BlurView=require('react-native-blur/src/BlurView.js');
-var VibrancyView=require('react-native-blur/src/VibrancyView.js');
-
-module.exports={
-BlurView:BlurView,
-VibrancyView:VibrancyView};
-});
-__d('react-native-blur/src/BlurView.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
-
-requireNativeComponent=
-
-React.requireNativeComponent;var Component=React.Component;var 
-
-BlurView=function(_Component){babelHelpers.inherits(BlurView,_Component);function BlurView(){babelHelpers.classCallCheck(this,BlurView);return babelHelpers.possibleConstructorReturn(this,Object.getPrototypeOf(BlurView).apply(this,arguments));}babelHelpers.createClass(BlurView,[{key:'render',value:function render()
-{
-return (
-React.createElement(NativeBlurView,babelHelpers.extends({},
-this.props,{
-style:[{
-backgroundColor:'transparent'},
-this.props.style]})));}}]);return BlurView;}(Component);
-
-
-
-
-
-
-BlurView.propTypes={
-blurType:React.PropTypes.string};
-
-
-var NativeBlurView=requireNativeComponent('BlurView',BlurView);
-
-module.exports=BlurView;
-});
-__d('react-native-blur/src/VibrancyView.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
-
-requireNativeComponent=
-
-React.requireNativeComponent;var Component=React.Component;var 
-
-VibrancyView=function(_Component){babelHelpers.inherits(VibrancyView,_Component);function VibrancyView(){babelHelpers.classCallCheck(this,VibrancyView);return babelHelpers.possibleConstructorReturn(this,Object.getPrototypeOf(VibrancyView).apply(this,arguments));}babelHelpers.createClass(VibrancyView,[{key:'render',value:function render()
-{
-return (
-React.createElement(NativeVibrancyView,babelHelpers.extends({},
-this.props,{
-style:[{
-backgroundColor:'transparent'},
-this.props.style]})));}}]);return VibrancyView;}(Component);
-
-
-
-
-
-
-VibrancyView.propTypes={
-blurType:React.PropTypes.string};
-
-
-var NativeVibrancyView=requireNativeComponent('VibrancyView',VibrancyView);
-
-module.exports=VibrancyView;
 });
 __d('reactSkeleton/shared/utils.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
 
@@ -63653,7 +64229,7 @@ React.createElement(View,{style:styles.container},
 React.createElement(TopSpacer,{
 backColor:"#0079c0"}),
 React.createElement(MenuItem,{
-title:'My Bounties (2)',
+title:'My Bounties',
 onPress:this.handleBounties}),
 
 React.createElement(MenuItem,{
@@ -63737,7 +64313,10 @@ __d('reactSkeleton/myBountyScreen.js',function(global, require, module, exports)
 
 var React=require('react-native/Libraries/react-native/react-native.js');
 var GoBack=require('reactSkeleton/shared/goBack.js');
-var TopSpacer=require('reactSkeleton/shared/topSpacer.js');var 
+var TopSpacer=require('reactSkeleton/shared/topSpacer.js');
+var BountyItem=require('reactSkeleton/common/bountyItem.js');
+
+var API=require('reactSkeleton/api.js');var 
 
 
 
@@ -63747,27 +64326,61 @@ Dimensions=
 
 
 
-React.Dimensions;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;
 
-var StartScreen=React.createClass({displayName:'StartScreen',
+React.Dimensions;var ListView=React.ListView;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;
+
+var MyBountScreen=React.createClass({displayName:'MyBountScreen',
 getInitialState:function(){
-return {};},
+var ds=new ListView.DataSource({
+rowHasChanged:function(r1,r2){return r1!==r2;}});
+
+
+return {
+isRefreshing:false,
+bounties:[],
+dataSource:ds.cloneWithRows([]),
+firstLoaded:false,
+userImages:[]};},
+
+
+componentDidMount:function(){
+this.refresh();},
 
 
 
-componentDidMount:function(){},
+refresh:function(){var _this=this;
+API.getMyBounties(function(res){
+_this.setState({
+dataSource:_this.state.dataSource.cloneWithRows(res.bounties),
+isRefreshing:false,
+firstLoaded:true,
+userImages:_this.state.userImages.concat(res.userImages)});});},
 
 
-render:function(){var _this=this;
+
+renderBounty:function(bounty){
+return React.createElement(BountyItem,{
+userImages:this.state.userImages,
+navigator:this.props.navigator,
+key:bounty._id,
+data:bounty});},
+
+render:function(){var _this2=this;
 return (
 React.createElement(View,{style:[styles.container]},
 React.createElement(TopSpacer,null),
 React.createElement(GoBack,{
 onPress:function(){
-_this.props.navigator.pop();},
+_this2.props.navigator.pop();},
 
-title:'My Bounties'})));}});
-
+title:'My Bounties'}),
+React.createElement(ListView,{
+dataSource:this.state.dataSource,
+renderRow:this.renderBounty,
+firstLoaded:this.state.firstLoaded,
+automaticallyAdjustContentInsets:false,
+isRefreshing:this.state.isRefreshing,
+onRefresh:this.refresh})));}});
 
 
 
@@ -63779,7 +64392,7 @@ main:state.main};}
 
 
 
-module.exports=(0,_native.connect)(mapStateToProps)(StartScreen);
+module.exports=(0,_native.connect)(mapStateToProps)(MyBountScreen);
 
 var styles=StyleSheet.create({
 container:{

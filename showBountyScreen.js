@@ -7,9 +7,12 @@ var BorderButton = require('./shared/borderButton.js');
 var UserBountyHeader = require('./common/userBountyHeader.js');
 var WideButton = require('./shared/wideButton.js');
 var BountyMapScreen = require('./bountyMapScreen.js');
+var ContactScreen = require('./contactScreen.js');
 var ShowBountyRequestsScreen = require('./showBountyRequestsScreen.js');
 var API = require('./api.js');
 var BlurModal = require('./shared/blurModal.js');
+var Spinner = require('react-native-spinkit');
+
 
 import {connect} from 'react-redux/native'
 // import {login, logout, menuChange} from './app/actions/main'
@@ -27,7 +30,8 @@ var StartScreen = React.createClass({
   getInitialState() {
       return {
         requested: false,
-        modalVisible: false
+        modalVisible: false,
+        modalText: "Sending transaction..."
       };
   },
   componentDidMount () {
@@ -117,9 +121,36 @@ var StartScreen = React.createClass({
     }
   },
   releasePayment() {
-    this.setState({
-      modalVisible: true
-    })
+    AlertIOS.alert(
+      'Confirm',
+      'Are you sure you want to release this bounty?',
+      [
+        {text: 'No', onPress: () => console.log('no Pressed!')},
+        {text: 'Yes', onPress: () => {
+          this.setState({
+            modalVisible: true
+          })
+
+          setTimeout(()=>{
+            this.setState({
+              modalText: "Payment Completed!"
+            })
+
+            setTimeout(()=>{
+              this.setState({
+                modalVisible:false
+              })
+
+              this.props.navigator.pop();
+            }, 1000)
+
+
+          }, 3000)
+        }},
+      ]
+    ); 
+
+    
   },
   getBottomButton () {
     
@@ -151,8 +182,13 @@ var StartScreen = React.createClass({
           <View
             style={styles.modalInner}>
             <Text 
-              style={styles.modalText}>Sending transaction...</Text>
-
+              style={styles.modalText}>{this.state.modalText}</Text>
+              <Spinner 
+                  style={styles.spinner} 
+                  isVisible={true} 
+                  size={80} 
+                  type={"ChasingDots"} 
+                  color={"#FFAC44"}/>
               
               
               <WideButton
@@ -183,6 +219,7 @@ var StartScreen = React.createClass({
         <View style={styles.block}>
           <View style={styles.top}>
             <UserBountyHeader 
+              inProgress={this.props.data.accepted}
               userId={this.props.data.userId}
               username={this.props.data.username}
               bountyAmount={this.props.data.amount}
@@ -207,6 +244,14 @@ var StartScreen = React.createClass({
         {this.getMapButton()}
 
         <BorderButton 
+          onPress={()=>{
+            this.props.navigator.push({
+              component: ContactScreen,
+              passProps: {
+                bounty: this.props.data
+              }
+            })
+          }}
           title={"Contact " + this.props.data.username}/>
 
         {this.getBottomButton()}
@@ -275,5 +320,9 @@ var styles = StyleSheet.create({
  },
  modalAmount: {
    fontSize: 24
+ },
+ spinner: {
+   margin: 26,
+   alignSelf: "center"
  }
 });

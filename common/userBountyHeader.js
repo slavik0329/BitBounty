@@ -54,6 +54,11 @@ module.exports = React.createClass({
       </View>
     }
   },
+  getStatus() {
+    if ( this.props.inProgress ) {
+      return <Text style={styles.progressText}>In Progress</Text>
+    }
+  },
   render: function() {
   
     return (
@@ -64,6 +69,7 @@ module.exports = React.createClass({
              style={styles.userImage} />
           <Text style={styles.usernameText}>{this.state.username}</Text>
         </View>
+        {this.getStatus()}
         {this.getBountyAmount()}
       </View>
     );
@@ -112,5 +118,10 @@ var styles = StyleSheet.create({
     color: "#E26648",
     left:-4,
   },
- 
+ progressText: {
+  color: "green",
+  position: "absolute",
+  top: 12,
+  left: 140,
+ }
 });

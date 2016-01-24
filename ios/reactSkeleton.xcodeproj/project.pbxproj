@@ -33,6 +33,7 @@
 		AA7E843F1C53D5E80081E1B9 /* Bitter-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA7E843D1C53D5E80081E1B9 /* Bitter-Bold.ttf */; };
 		AA7E84421C5449A80081E1B9 /* map_poi.png in Resources */ = {isa = PBXBuildFile; fileRef = AA7E84411C5449A80081E1B9 /* map_poi.png */; };
 		AA7E84491C54640D0081E1B9 /* libRNBlur.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7E84481C5464050081E1B9 /* libRNBlur.a */; };
+		AA7E84501C5516530081E1B9 /* libRNSpinkit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AA7E844F1C55164A0081E1B9 /* libRNSpinkit.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -127,6 +128,13 @@
 			remoteGlobalIDString = A68BD7BC1BC31318005F02DF;
 			remoteInfo = RNBlur;
 		};
+		AA7E844E1C55164A0081E1B9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA7E844A1C55164A0081E1B9 /* RNSpinkit.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = D42CB3511B2538DE00FD0AE2;
+			remoteInfo = RNSpinkit;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -162,6 +170,7 @@
 		AA7E843D1C53D5E80081E1B9 /* Bitter-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Bitter-Bold.ttf"; sourceTree = "<group>"; };
 		AA7E84411C5449A80081E1B9 /* map_poi.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = map_poi.png; sourceTree = "<group>"; };
 		AA7E84431C5464050081E1B9 /* RNBlur.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNBlur.xcodeproj; path = "../node_modules/react-native-blur/ios/RNBlur.xcodeproj"; sourceTree = "<group>"; };
+		AA7E844A1C55164A0081E1B9 /* RNSpinkit.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNSpinkit.xcodeproj; path = "../node_modules/react-native-spinkit/ios/RNSpinkit.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +185,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA7E84501C5516530081E1B9 /* libRNSpinkit.a in Frameworks */,
 				AA7E84491C54640D0081E1B9 /* libRNBlur.a in Frameworks */,
 				AA7E842D1C53CE870081E1B9 /* libReactNativeIcons.a in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
@@ -302,6 +312,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				AA7E844A1C55164A0081E1B9 /* RNSpinkit.xcodeproj */,
 				AA7E84431C5464050081E1B9 /* RNBlur.xcodeproj */,
 				AA7E841D1C53CE820081E1B9 /* ReactNativeIcons.xcodeproj */,
 				146833FF1AC3E56700842450 /* React.xcodeproj */,
@@ -382,6 +393,14 @@
 			isa = PBXGroup;
 			children = (
 				AA7E84481C5464050081E1B9 /* libRNBlur.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA7E844B1C55164A0081E1B9 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA7E844F1C55164A0081E1B9 /* libRNSpinkit.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -503,6 +522,10 @@
 					ProductGroup = AA7E84441C5464050081E1B9 /* Products */;
 					ProjectRef = AA7E84431C5464050081E1B9 /* RNBlur.xcodeproj */;
 				},
+				{
+					ProductGroup = AA7E844B1C55164A0081E1B9 /* Products */;
+					ProjectRef = AA7E844A1C55164A0081E1B9 /* RNSpinkit.xcodeproj */;
+				},
 			);
 			projectRoot = "";
 			targets = (
@@ -595,6 +618,13 @@
 			fileType = archive.ar;
 			path = libRNBlur.a;
 			remoteRef = AA7E84471C5464050081E1B9 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		AA7E844F1C55164A0081E1B9 /* libRNSpinkit.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRNSpinkit.a;
+			remoteRef = AA7E844E1C55164A0081E1B9 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
