@@ -1,6 +1,6 @@
 var multer          =       require('multer');
 var upload      =   multer({ dest: './uploads/'});
-// var FeedEvent            = require('./models/feedEvent');
+var Bounty            = require('./models/bounty');
 var User            = require('./models/user');
 
 var easyimg = require('easyimage');
@@ -107,28 +107,24 @@ module.exports = function(app, passport) {
         })
     });
 
-    app.get('/feedEvents/:page', function(req, res) {
+    app.get('/bounties', function(req, res) {
 
-        var start = req.params.page*10;
+        Bounty.find({}, null, {
 
-        FeedEvent.find({}, null, {
-            limit: 10,
-            skip: start
         }).sort({
             time: -1
-        }).exec(function (err,events) {
+        }).exec(function (err,bounties) {
 
-            var userIds = events.map(function (event) {
-                return event.userId;
+            var userIds = bounties.map(function (bounty) {
+                return bounty.userId;
             })
 
             getImagesForIds(userIds, function (userImages) {
                 res.json({
-                    events: events,
+                    bounties: bounties,
                     userImages: userImages
                 })
             })
-
            
         });
 
@@ -159,70 +155,70 @@ module.exports = function(app, passport) {
         });
 
 
-    app.post('/addFeedEvent', upload.any(), isLoggedIn,  function(req, res) {
-        // console.log(req.body)
-        // console.log(req.params)
-        // console.log(req.body)
+    // app.post('/addFeedEvent', upload.any(), isLoggedIn,  function(req, res) {
+    //     // console.log(req.body)
+    //     // console.log(req.params)
+    //     // console.log(req.body)
 
 
-        var feedEvent = new FeedEvent();
+    //     var feedEvent = new FeedEvent();
 
-        feedEvent.meals = req.body.meals;
-        feedEvent.userId = req.body.userId;
-        feedEvent.username = req.user.local.username;
-        feedEvent.note = req.body.note;
-        feedEvent.location = JSON.parse(req.body.location);
-        feedEvent.time = Date.now();
-        feedEvent.userId = req.user._id;
+    //     feedEvent.meals = req.body.meals;
+    //     feedEvent.userId = req.body.userId;
+    //     feedEvent.username = req.user.local.username;
+    //     feedEvent.note = req.body.note;
+    //     feedEvent.location = JSON.parse(req.body.location);
+    //     feedEvent.time = Date.now();
+    //     feedEvent.userId = req.user._id;
 
-        if ( req.files.length ) {
-            var dest = req.files[0].path.split("/")[1].split(".")[0] + "_resized.jpg";
+    //     if ( req.files.length ) {
+    //         var dest = req.files[0].path.split("/")[1].split(".")[0] + "_resized.jpg";
 
-            easyimg.resize({
-              src:"uploads/"+req.files[0].path.split("/")[1], 
-              dst: 'uploads/'+dest, 
-              width:1080, 
-              height:1920
-            }).then(function (file) {
+    //         easyimg.resize({
+    //           src:"uploads/"+req.files[0].path.split("/")[1], 
+    //           dst: 'uploads/'+dest, 
+    //           width:1080, 
+    //           height:1920
+    //         }).then(function (file) {
 
-                // set the user's local credentials
-                feedEvent.image = dest;
+    //             // set the user's local credentials
+    //             feedEvent.image = dest;
 
-                // save the user
-                feedEvent.save(function(err) {
-                    if (err)
-                        throw err;
-                });
+    //             // save the user
+    //             feedEvent.save(function(err) {
+    //                 if (err)
+    //                     throw err;
+    //             });
                 
-                console.log(req.body)
-                res.json({ok:true})
+    //             console.log(req.body)
+    //             res.json({ok:true})
                 
-            });
-        } else {
-            feedEvent.save(function(err) {
-                if (err)
-                    throw err;
+    //         });
+    //     } else {
+    //         feedEvent.save(function(err) {
+    //             if (err)
+    //                 throw err;
 
-                res.json({ok:true})
+    //             res.json({ok:true})
 
-            });
-        }
+    //         });
+    //     }
 
-    });
+    // });
 
     app.post('/setusername', isLoggedIn,  function(req, res) {
         var username = req.body.username.trim();
 
-        FeedEvent.update({
-            userId:req.user._id
-        }, {
-            $set:{
-                username:username
-            }
-        },{
-            multi: true
-        }, function (err, other) {
-        })
+        // FeedEvent.update({
+        //     userId:req.user._id
+        // }, {
+        //     $set:{
+        //         username:username
+        //     }
+        // },{
+        //     multi: true
+        // }, function (err, other) {
+        // })
 
         User.findOne({
             "local.username": { $regex: new RegExp("^" + username.toLowerCase(), "i") }
@@ -242,6 +238,27 @@ module.exports = function(app, passport) {
         })
         
 
+        
+    });
+
+    app.post('/addBounty', isLoggedIn,  function(req, res) {
+        var bounty = new Bounty();
+        
+        bounty.location = {
+            latitude: req.body.latitude,
+            longitude: req.body.longitude
+        };
+
+        bounty.amount = req.body.amount;
+        bounty.notes = req.body.notes;
+        bounty.title = req.body.title;
+        bounty.userId = req.user._id;
+        bounty.username = req.user.local.username;
+
+        bounty.save((bounty)=> {
+            res.json(bounty)
+
+        });
         
     });
 

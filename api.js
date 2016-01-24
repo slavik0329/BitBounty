@@ -64,48 +64,32 @@ module.exports = {
 			callback(err)
 		})
 	},
-	setUsername: function (username, callback) {
-		fetch('http://'+Globals.url+'/setusername', {
+	addBounty: function (bounty, callback) {
+		var data = { 
+		  	amount: parseFloat(bounty.amount),
+		  	notes: bounty.notes
+		}
+
+		if ( data.location ) {
+			data.location = {
+				latitude: bounty.location.latitude,
+				longitude: bounty.location.longitude,
+			}
+		}
+
+		fetch('http://'+Globals.url+'/addBounty', {
 		  method: 'POST',
 		  headers: {
 		    'Accept': 'application/json',
 		    'Content-Type': 'application/x-www-form-urlencoded',
 		  },
-		  body: Serialize({ // Serialize urlencodes the form data
-		  	username
-		  })
+		  body: Serialize(data)
 		}).then( (res) => res.json() ).then( (res) => {
 			callback(res);
 		}).catch((err)=> {
+			console.log(err)
 			callback(err)
 		})
-	},
-	addBounty: function (events, imageURL, callback) {
-		console.log(events)
-		var obj = {
-		    uploadUrl: 'http://'+Globals.url+'/addBounty',
-		    method: 'POST', // default 'POST',support 'POST' and 'PUT'
-		    headers: {
-			    'Accept': 'application/json',
-			   //  'Content-Type': "multipart/form-data"
-		    },
-		    fields: events,
-		    files: []
-		};
-
-		if ( imageURL ) {
-		  obj.files.push({
-		      filepath: imageURL, // require, file absoluete path
-		      filename: "image.jpg"
-		  })
-		}
-		// console.log(events)
-		FileUpload.upload(obj, (err, result) => {
-		  setTimeout( () => {
-		    callback(result); // result.data
-		  }, 500)
-		})
-
 	},
 	setProfilePhoto: function (imageURL, callback) {
 		var obj = {
