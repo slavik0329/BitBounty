@@ -282,13 +282,14 @@ module.exports = function(app, passport) {
     });
 
     app.post('/getBounty', isLoggedIn,  function(req, res) {
+        
         Bounty.findOne({
             _id: req.body.bountyId
         }, function (err, bounty) {
             res.json({
-                bounty
+                bounty:bounty
             })
-        })
+        });
 
     });
 
