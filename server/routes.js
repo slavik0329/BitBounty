@@ -272,7 +272,7 @@ module.exports = function(app, passport) {
         bounty.username = req.user.local.username;
         bounty.time = new Date();
 
-        bounty.save((err,bounty)=> {
+        bounty.save(function (err,bounty){
             res.json({
                 ok: true
             })
@@ -314,7 +314,7 @@ module.exports = function(app, passport) {
                 rejected: false
             })
 
-            bounty.save((err,bounty)=>{
+            bounty.save(function (err,bounty) {
 
             });
         })

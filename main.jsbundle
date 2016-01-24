@@ -59991,7 +59991,8 @@ __d('reactSkeleton/app/reducers/addBounty.js',function(global, require, module, 
 
 
 
-main;var initialState={data:{title:"",amount:null,location:null}};function main(){var state=arguments.length<=0||arguments[0]===undefined?initialState:arguments[0];var action=arguments[1];
+
+main;var initialState={data:{title:"",amount:null,location:null,notes:""}};function main(){var state=arguments.length<=0||arguments[0]===undefined?initialState:arguments[0];var action=arguments[1];
 switch(action.type){
 case "SET_TITLE":
 return babelHelpers.extends({},
@@ -60015,7 +60016,16 @@ return babelHelpers.extends({},
 state,{
 data:babelHelpers.extends({},
 state.data,{
-location:action.location})});}
+location:action.location})});
+
+
+
+case "SET_NOTES":
+return babelHelpers.extends({},
+state,{
+data:babelHelpers.extends({},
+state.data,{
+notes:action.notes})});}
 
 
 
@@ -60344,7 +60354,7 @@ var LoginInput=require('reactSkeleton/shared/loginInput.js');
 var LoginButton=require('reactSkeleton/shared/loginButton.js');
 var AlternateLoginButton=require('reactSkeleton/shared/alternateLoginButton.js');
 var HomeScreen=require('reactSkeleton/homeScreen.js');
-
+var API=require('reactSkeleton/api.js');
 var Utils=require('reactSkeleton/shared/utils.js');var 
 
 
@@ -60368,52 +60378,182 @@ loginType:"create",
 loading:false};},
 
 
-componentDidMount:function(){var _this=this;
+componentWillReceiveProps:function(nextProps){var _this=this;
+if(!nextProps.main.account.email){
+this.setState({
+loading:true});
+
+
+API.logout(function(res){
+_this.props.dispatch((0,_main.menuChange)(false));
+
+Utils.setStorage("ACCOUNT_SECRET",null);
+
+_this.setState({
+loading:false});
+
+
 setTimeout(function(){
-_this.doLogin();},
-50);},
+_this.props.navigator.pop();},
+300);});}},
 
 
 
-handleLogin:function(){
+componentDidMount:function(){
+this.loginFromStorage();},
 
-this.doLogin();},
+loginFromStorage:function(){var _this2=this;
+Utils.getStorage("ACCOUNT_SECRET",function(secret){
+if(secret){
+_this2.setState({
+loading:true});
 
 
-handleSignup:function(){
-this.doLogin();},
+API.login(secret.email,secret.password,function(res){
+if(res.error){}else 
+
+{
+_this2.doLogin(res.user);}
+
+
+_this2.setState({
+loading:false});});}});},
+
+
+
+
+
+handleLogin:function(){var _this3=this;
+if(!this.state.loginEmail||!this.state.loginPassword){
+this.setState({
+error:"You are missing some fields"});
+
+
+return;}
+
+
+this.setState({
+loading:true});
+
+
+API.login(this.state.loginEmail,this.state.loginPassword,function(res){
+if(res.error){
+_this3.setState({
+error:res.error});}else 
+
+{
+Utils.setStorage("ACCOUNT_SECRET",{
+email:_this3.state.loginEmail,
+password:_this3.state.loginPassword});
+
+
+_this3.doLogin(res.user);}
+
+
+_this3.setState({
+loading:false});});},
+
+
+
+
+
+handleSignup:function(){var _this4=this;
+if(!this.state.loginEmail||!this.state.loginPassword||!this.state.loginPassword2){
+this.setState({
+error:"You are missing some fields"});
+
+
+return;}
+
+
+function validateEmail(email){
+var re=/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+return re.test(email);}
+
+
+if(!validateEmail(this.state.loginEmail)){
+this.setState({
+error:"Email not valid!"});
+
+
+return;}
+
+
+if(this.state.loginPassword!=this.state.loginPassword2){
+this.setState({
+error:"Passwords do not match"});
+
+
+return;}
+
+
+this.setState({
+loading:true});
+
+
+API.signup(this.state.loginEmail,this.state.loginPassword,function(res){
+
+if(res.error){
+_this4.setState({
+error:res.error});}else 
+
+{
+Utils.setStorage("ACCOUNT_SECRET",{
+email:_this4.state.loginEmail,
+password:_this4.state.loginPassword});
+
+_this4.doLogin(res.user);}
+
+
+_this4.setState({
+loading:false});});},
+
+
 
 
 
 doLogin:function(user){
 
+this.props.dispatch((0,_main.login)({
+_id:user._id,
+email:user.local.email,
+username:user.local.username,
+userImage:user.image}));
+
+
+
 this.props.navigator.push({
 name:'Scene '+1,
 index:1,
-component:HomeScreen});},
+component:HomeScreen});
+
+
+this.setState({
+loginEmail:"",
+loginPassword:"",
+loginPassword2:""});},
 
 
 
 
-
-getBottomText:function(){var _this2=this;
+getBottomText:function(){var _this5=this;
 if(this.state.loginType=="create"){
 return React.createElement(AlternateLoginButton,{
 text:"Already have an account?",
-onPress:function(){return _this2.setState({loginType:"login"});}});}else 
+onPress:function(){return _this5.setState({loginType:"login"});}});}else 
 
 {
 return React.createElement(AlternateLoginButton,{
 text:"Don't have an account?",
-onPress:function(){return _this2.setState({loginType:"create"});}});}},
+onPress:function(){return _this5.setState({loginType:"create"});}});}},
 
 
 
-getRepeatPassword:function(){var _this3=this;
+getRepeatPassword:function(){var _this6=this;
 if(this.state.loginType=="create"){
 return React.createElement(LoginInput,{
 placeholder:'Repeat Password',
-onChangeText:function(loginPassword2){return _this3.setState({loginPassword2:loginPassword2});},
+onChangeText:function(loginPassword2){return _this6.setState({loginPassword2:loginPassword2});},
 value:this.state.loginPassword2,
 password:true});}},
 
@@ -60436,7 +60576,7 @@ style:{
 marginTop:25}});},
 
 
-render:function(){var _this4=this;
+render:function(){var _this7=this;
 var containerTopPadding=50;
 var inputsTopMargin=0;
 var errorMargin=16;
@@ -60467,13 +60607,13 @@ marginTop:inputsTopMargin}]},
 
 React.createElement(LoginInput,{
 placeholder:'E-mail address',
-onChangeText:function(loginEmail){return _this4.setState({loginEmail:loginEmail});},
+onChangeText:function(loginEmail){return _this7.setState({loginEmail:loginEmail});},
 value:this.state.loginEmail}),
 
 
 React.createElement(LoginInput,{
 placeholder:'Password',
-onChangeText:function(loginPassword){return _this4.setState({loginPassword:loginPassword});},
+onChangeText:function(loginPassword){return _this7.setState({loginPassword:loginPassword});},
 value:this.state.loginPassword,
 password:true}),
 
@@ -60518,7 +60658,8 @@ inputs:{},
 error:{
 textAlign:"center",
 color:"orange",
-marginBottom:4}});
+marginBottom:4,
+top:-12}});
 });
 __d('reactSkeleton/shared/loginInput.js',function(global, require, module, exports) {  'use strict';
 
@@ -60661,7 +60802,9 @@ var TopSpacer=require('reactSkeleton/shared/topSpacer.js');
 var TitleBar=require('reactSkeleton/shared/titleBar.js');
 var BountyItem=require('reactSkeleton/common/bountyItem.js');
 var ScrollWithRefresh=require('reactSkeleton/shared/scrollWithRefresh.js');
-var AddBountyScreen=require('reactSkeleton/addBountyScreen.js');var 
+var AddBountyScreen=require('reactSkeleton/addBountyScreen.js');
+var UsernameNag=require('reactSkeleton/shared/usernameNag.js');
+var API=require('reactSkeleton/api.js');var 
 
 
 
@@ -60685,7 +60828,8 @@ return {
 isRefreshing:false,
 bounties:[],
 dataSource:ds.cloneWithRows([]),
-firstLoaded:false};},
+firstLoaded:false,
+userImages:[]};},
 
 
 componentDidMount:function(){
@@ -60693,40 +60837,31 @@ this.refresh();},
 
 renderBounty:function(bounty){
 return React.createElement(BountyItem,{
+userImages:this.state.userImages,
 navigator:this.props.navigator,
 key:bounty._id,
 data:bounty});},
 
-refresh:function(){
+refresh:function(){var _this=this;
 this.setState({
 isRefreshing:true});
 
 
-var bounties=[
-{
-username:"JasonKing",
-userImage:"https://scontent-ord1-1.xx.fbcdn.net/hprofile-xfa1/v/t1.0-1/p320x320/11903719_991959437513464_2888597908116804130_n.jpg?oh=d266cfcc7b13d6c5a8f91ca07aa906af&oe=573AA7A0",
-bountyAmount:0.15,
-title:"Feed the homeless in Wynwood",
-description:"Help feed some hungry people in Wynwood. You must submit proof in order to recieve payment.",
-location:{
-latitude:26.801336,
-longitude:-80.199341}},
-
-
-{
-username:"Slavik",
-userImage:"https://scontent-ord1-1.xx.fbcdn.net/hprofile-xfa1/v/t1.0-1/p320x320/10363871_10100210846434665_1289736873989860790_n.jpg?oh=134a965740ba90b1ea073d8d8f6c416f&oe=574092CD",
-bountyAmount:0.1511,
-title:"Take out my trash",
-description:"I'm looking for a high speed individual to get to my house as soon as possible and take my trash to the curb. Thanks."}];
+API.getBounties(null,function(res){
+_this.setState({
+dataSource:_this.state.dataSource.cloneWithRows(res.bounties),
+isRefreshing:false,
+firstLoaded:true,
+userImages:_this.state.userImages.concat(res.userImages)});});},
 
 
 
-this.setState({
-dataSource:this.state.dataSource.cloneWithRows(bounties),
-isRefreshing:false});},
 
+
+
+
+handleUsernameSet:function(username){
+this.props.dispatch((0,_main.setUsername)(username));},
 
 handleAddBounty:function(){
 this.props.navigator.push({
@@ -60737,15 +60872,19 @@ render:function(){
 
 return (
 React.createElement(View,{style:[styles.container]},
+React.createElement(UsernameNag,{
+onUsernameSet:this.handleUsernameSet,
+account:this.props.main.account}),
 React.createElement(TopSpacer,null),
 React.createElement(TitleBar,{
 title:"Bounti",
 onAddPress:this.handleAddBounty}),
 
-React.createElement(ScrollWithRefresh,{
+React.createElement(ListView,{
 dataSource:this.state.dataSource,
 renderRow:this.renderBounty,
 firstLoaded:this.state.firstLoaded,
+automaticallyAdjustContentInsets:false,
 isRefreshing:this.state.isRefreshing,
 onRefresh:this.refresh})));}});
 
@@ -61405,7 +61544,7 @@ onPress:this.handlePress,
 style:[styles.container]},
 
 React.createElement(UserBountyHeader,{
-bountyAmount:this.props.data.bountyAmount,
+bountyAmount:this.props.data.amount,
 userImage:this.props.data.userImage,
 username:this.props.data.username}),
 React.createElement(View,{style:styles.bottom},
@@ -61496,7 +61635,8 @@ var TopSpacer=require('reactSkeleton/shared/topSpacer.js');
 var BorderButton=require('reactSkeleton/shared/borderButton.js');
 var UserBountyHeader=require('reactSkeleton/common/userBountyHeader.js');
 var WideButton=require('reactSkeleton/shared/wideButton.js');
-var BountyMapScreen=require('reactSkeleton/bountyMapScreen.js');var 
+var BountyMapScreen=require('reactSkeleton/bountyMapScreen.js');
+var API=require('reactSkeleton/api.js');var 
 
 
 
@@ -61517,50 +61657,62 @@ return {
 requested:false};},
 
 
-componentDidMount:function(){},
+componentDidMount:function(){var _this=this;
+API.getBounty(this.props.data._id,function(res){
+res.bounty.requests.forEach(function(request){
+if(request.userId==_this.props.main.account._id){
+_this.setState({
+requested:true});}});});},
 
 
-requestToComplete:function(){var _this=this;
+
+
+
+requestToComplete:function(){var _this2=this;
 AlertIOS.alert(
 'Confirm',
 'Are you sure you want to request this bounty from '+this.props.data.username+'?',
 [
 {text:'No',onPress:function(){return console.log('no Pressed!');}},
 {text:'Yes',onPress:function(){
-_this.setState({
+API.requestBounty(_this2.props.data._id,function(res){});
+
+
+
+_this2.setState({
 requested:true});}}]);},
 
 
 
 
 
-cancelRequest:function(){var _this2=this;
+cancelRequest:function(){var _this3=this;
 AlertIOS.alert(
 'Confirm',
 'Are you sure you want to cancel this bounty request from '+this.props.data.username+'?',
 [
 {text:'No',onPress:function(){return console.log('no Pressed!');}},
 {text:'Yes',onPress:function(){
-_this2.setState({
+_this3.setState({
 requested:false});}}]);},
 
 
 
 
 
-getMapButton:function(){var _this3=this;
+getMapButton:function(){var _this4=this;
 if(this.props.data.location){
 return React.createElement(BorderButton,{
 style:{
 borderBottomWidth:0},
 
 onPress:function(){
-_this3.props.navigator.push({
+_this4.props.navigator.push({
 component:BountyMapScreen,
 passProps:{
 region:{
-latitude:_this3.props.data.location.latitude,
-longitude:_this3.props.data.location.longitude,
+latitude:_this4.props.data.location.latitude,
+longitude:_this4.props.data.location.longitude,
 latitudeDelta:3,
 longitudeDelta:3}}});},
 
@@ -61573,6 +61725,13 @@ return React.createElement(View,{style:styles.spacer});}},
 
 
 getBottomButton:function(){
+
+if(this.props.main.account._id==this.props.data.userId){
+return React.createElement(WideButton,{
+onPress:this.cancelRequest,
+title:'Edit bounty'});}
+
+
 if(this.state.requested){
 return React.createElement(WideButton,{
 onPress:this.cancelRequest,
@@ -61583,21 +61742,21 @@ onPress:this.requestToComplete,
 title:'Request to complete'});}},
 
 
-render:function(){var _this4=this;
+render:function(){var _this5=this;
 
 return (
 React.createElement(View,{style:[styles.container]},
 React.createElement(TopSpacer,null),
 React.createElement(GoBack,{
 onPress:function(){
-_this4.props.navigator.pop();},
+_this5.props.navigator.pop();},
 
 title:"View Bounty"}),
 React.createElement(View,{style:styles.block},
 React.createElement(View,{style:styles.top},
 React.createElement(UserBountyHeader,{
 username:this.props.data.username,
-bountyAmount:this.props.data.bountyAmount,
+bountyAmount:this.props.data.amount,
 userImage:this.props.data.userImage}),
 
 React.createElement(Text,{
@@ -61608,7 +61767,7 @@ React.createElement(ScrollView,{
 automaticallyAdjustContentInsets:false,
 style:styles.scroll},
 React.createElement(Text,{
-style:styles.description},this.props.data.description))),
+style:styles.description},this.props.data.notes))),
 
 
 
@@ -61688,7 +61847,8 @@ React.Dimensions;var StyleSheet=React.StyleSheet;var View=React.View;var Text=Re
 
 module.exports=React.createClass({displayName:'exports',
 getDefaultProps:function(){
-return {};},
+return {
+backTitle:"Back"};},
 
 
 getTitle:function(){
@@ -61735,7 +61895,7 @@ left:28,
 top:5},
 
 onPress:this.props.onPress},
-React.createElement(Text,{style:styles.textStyle},'Back')),
+React.createElement(Text,{style:styles.textStyle},this.props.backTitle)),
 
 
 
@@ -61840,6 +62000,10 @@ Image=
 React.Image;var StyleSheet=React.StyleSheet;var Text=React.Text;var View=React.View;
 
 module.exports=React.createClass({displayName:'exports',
+getDefaultProps:function(){
+return {
+userImage:"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAH8AAAB/CAMAAADxY+0hAAAAJ1BMVEX////Z2dnW1tb6+vrz8/Pp6enj4+Pv7+/f39/29vbc3Nzs7Ozm5uaaVhUjAAACxElEQVRoge2a23aEMAhFJ3dv//+9zVhtraMJMAez2nqW75sQAiT4eNy6devWL5PzPo1hmkIYve8vZqc4GGNt/mYZY4bg3UXwsTNP4l52iBe4wUV7BF9NSMr46Ry+WOAV6X4o02dNavhUWfzigk4pEEcSPmtQMSBQ8VkKBpBXP3sAjnccvLERze84+GwA+BjSQn8rLJ9LN3ZE4vnLx4Ygc/dnBwAjoOfjjQEeAdbZXwXMggL3Z+G6AREedwKciI8rxKLwAwagl/G7v8IX7j/M/zK+DSh+6/P3oLS9r3xcAYgiB+DyH6f1/BIw/3sJH3b82tdfJwlA5D1MwLfIq7DgAFjkHSjw+cg7mJM0QED/d5Lzh8t/ouMPTACy9ItLwEI8LAJk7scVYOHyYRlIVP6zUAegdfyJrn8G9wTRuv8W9p+4BCy7f8Pw9Wfng9UD28+sxOVH9BNoZLlA4RWekYWgvdcqTg+k8QDO6AKArf+3GLdgnREIOQBUtj8nATJfZwDTUwNAZfsf5A1Qcj+9DCjhiXVQbfnERgA++tmI8hCiOgavtoJWeQZeuYmi514vqswB9YbPq8plUP8fiOJblFbm26hUBq2++4tJCPjkfKri+hvzLwj/cvxp5t5FxRpwQfyXi7A+v1wB9P+AKi4fO/U/UuVPAPyPJzs1rn/VS5DuCagPInQjgHAJ12yAaG8AagZQX2F0DHDkFxCVG4A//OnzxAB4HaQv/tMA5PQl0/kDWNvBMpELDNdvFCEWuElGx/jA8/b9xQIT3rgR9ELH75wgC0WXjn+zlmhiZyQfYXDz3IZuZOyDGwcgfDHBUo+DF01bKSaYuhNckg67aBaUf9F3Ae/4vc5zwhuZhqOzrMSfsQAtEFSYtywYfsZB0t/3vTYDImZxR2nNy+zZFkjLT/JtFv+pvi3+OadrSc+6+Tf/5t/8/8r/ABcwIoa2idwgAAAAAElFTkSuQmCC"};},
+
 
 render:function(){
 
@@ -62005,6 +62169,186 @@ flex:1},
 map:{
 flex:1}});
 });
+__d('reactSkeleton/api.js',function(global, require, module, exports) {  var Globals=require("reactSkeleton/globals.js");
+var Serialize=require("reactSkeleton/lib/serialize.js");
+var FileUpload=require('NativeModules').FileUpload;
+
+module.exports={
+
+signup:function(email,password,callback){
+if(!email||!password){
+return false;}
+
+
+email=email.toLowerCase().trim();
+
+fetch('http://'+Globals.url+'/signup',{
+method:'POST',
+headers:{
+'Accept':'application/json',
+'Content-Type':'application/x-www-form-urlencoded'},
+
+body:Serialize({
+email:email,
+password:password})}).
+
+then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+callback(err);});},
+
+
+login:function(email,password,callback){
+if(!email||!password){
+return false;}
+
+
+email=email.toLowerCase().trim();
+
+fetch('http://'+Globals.url+'/login',{
+method:'POST',
+headers:{
+'Accept':'application/json',
+'Content-Type':'application/x-www-form-urlencoded'},
+
+body:Serialize({
+email:email,
+password:password})}).
+
+then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+callback(err);});},
+
+
+getLoginStatus:function(callback){
+fetch('http://'+Globals.url+'/getLoginStatus').then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+callback(err);});},
+
+
+logout:function(callback){
+fetch('http://'+Globals.url+'/logout').then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+callback(err);});},
+
+
+getMyBountyRequests:function(bountyId,callback){
+fetch('http://'+Globals.url+'/getMyBountyRequests',{
+method:'POST',
+headers:{
+'Accept':'application/json',
+'Content-Type':'application/x-www-form-urlencoded'},
+
+body:Serialize({
+bountyId:bountyId})}).
+
+then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+callback(err);});},
+
+
+getBounty:function(bountyId,callback){
+fetch('http://'+Globals.url+'/getBounty',{
+method:'POST',
+headers:{
+'Accept':'application/json',
+'Content-Type':'application/x-www-form-urlencoded'},
+
+body:Serialize({
+bountyId:bountyId})}).
+
+then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+callback(err);});},
+
+
+addBounty:function(bounty,callback){
+var data={
+amount:parseFloat(bounty.amount),
+notes:bounty.notes,
+title:bounty.title};
+
+
+if(bounty.location){
+data.latitude=bounty.location.latitude;
+data.longitude=bounty.location.longitude;}
+
+
+fetch('http://'+Globals.url+'/addBounty',{
+method:'POST',
+headers:{
+'Accept':'application/json',
+'Content-Type':'application/x-www-form-urlencoded'},
+
+body:Serialize(data)}).
+then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+callback(err);});},
+
+
+setProfilePhoto:function(imageURL,callback){
+var obj={
+uploadUrl:'http://'+Globals.url+'/setProfilePhoto',
+method:'POST',
+headers:{
+'Accept':'application/json'},
+
+
+files:[]};
+
+
+if(imageURL){
+obj.files.push({
+filepath:imageURL,
+filename:"image.jpg"});}
+
+
+
+FileUpload.upload(obj,function(err,result){
+setTimeout(function(){
+callback(result);},
+500);});},
+
+
+
+getBounties:function(){var page=arguments.length<=0||arguments[0]===undefined?1:arguments[0];var callback=arguments[1];
+fetch("http://"+Globals.url+"/bounties").then(function(res){return res.json();}).then(function(res){
+callback(res);});},
+
+
+requestBounty:function(bountyId){
+fetch('http://'+Globals.url+'/requestBounty',{
+method:'POST',
+headers:{
+'Accept':'application/json',
+'Content-Type':'application/x-www-form-urlencoded'},
+
+body:Serialize({
+bountyId:bountyId})}).
+
+then(function(res){return res.json();}).then(function(res){
+callback(res);}).
+catch(function(err){
+console.log(err);
+callback(err);});}};
+});
+__d('reactSkeleton/globals.js',function(global, require, module, exports) {  module.exports={
+url:"localhost:8073"};
+});
+__d('reactSkeleton/lib/serialize.js',function(global, require, module, exports) {  module.exports=function(obj){
+var str=[];
+for(var p in obj){
+if(obj.hasOwnProperty(p)){
+str.push(encodeURIComponent(p)+"="+encodeURIComponent(obj[p]));}}
+
+return str.join("&");};
+});
 __d('reactSkeleton/shared/scrollWithRefresh.js',function(global, require, module, exports) {  'use strict';
 
 var React=require('react-native/Libraries/react-native/react-native.js');
@@ -62052,8 +62396,7 @@ var loadingVisible=rowCount<1&&!this.props.firstLoaded;
 return (
 React.createElement(View,{style:styles.container},
 
-React.createElement(LoadingBlock,{
-visible:loadingVisible}),
+
 
 React.createElement(ListView,babelHelpers.extends({},
 this.props,{
@@ -62175,6 +62518,7 @@ return (
 React.createElement(View,{style:styles.container},
 React.createElement(PromptScreen,{
 promptTitle:'Enter a title for your bounty request',
+backTitle:"Cancel",
 onSubmit:this.handleSubmit,
 screenTitle:"Add Bounty",
 onBackPress:function(){
@@ -62232,7 +62576,14 @@ setAmount=setAmount;exports.
 
 
 
-setLocation=setLocation;function setTitle(title){return {type:"SET_TITLE",title:title};}function setAmount(amount){return {type:"SET_AMOUNT",amount:amount};}function setLocation(location){
+setNotes=setNotes;exports.
+
+
+
+
+
+
+setLocation=setLocation;function setTitle(title){return {type:"SET_TITLE",title:title};}function setAmount(amount){return {type:"SET_AMOUNT",amount:amount};}function setNotes(notes){return {type:"SET_NOTES",notes:notes};}function setLocation(location){
 return {
 type:"SET_LOCATION",
 location:location};}
@@ -62260,7 +62611,8 @@ getDefaultProps:function(){
 return {
 screenTitle:"",
 submitText:"Next",
-showSubmit:true};},
+showSubmit:true,
+titleMargin:30};},
 
 
 propTypes:{
@@ -62285,11 +62637,14 @@ return (
 React.createElement(View,{style:styles.container},
 React.createElement(TopSpacer,null),
 React.createElement(GoBack,{
+backTitle:this.props.backTitle,
 title:this.props.screenTitle,
 onPress:this.props.onBackPress}),
 
 React.createElement(Text,{
-style:styles.promptTitle},
+style:[styles.promptTitle,{
+marginTop:this.props.titleMargin}]},
+
 this.props.promptTitle),
 
 
@@ -62418,6 +62773,7 @@ borderRadius:4,
 fontSize:16,
 width:150,
 alignSelf:"center",
+textAlign:"center",
 fontWeight:"200"}});
 });
 __d('reactSkeleton/addBounty/bountyLocationScreen.js',function(global, require, module, exports) {  'use strict';var _native=require('react-redux/native.js');
@@ -62426,7 +62782,8 @@ var React=require('react-native/Libraries/react-native/react-native.js');
 var FullSwitch=require('reactSkeleton/shared/fullSwitch.js');
 
 var PromptScreen=require('reactSkeleton/shared/promptScreen.js');
-var BountyMapInputScreen=require('reactSkeleton/addBounty/bountyMapInputScreen.js');var 
+var BountyMapInputScreen=require('reactSkeleton/addBounty/bountyMapInputScreen.js');
+var BountyNotesScreen=require('reactSkeleton/addBounty/bountyNotesScreen.js');var 
 
 
 
@@ -62453,7 +62810,7 @@ var component=BountyMapInputScreen;}else
 var component=BountyNotesScreen;}
 
 this.props.navigator.push({
-component:BountyMapInputScreen});},
+component:component});},
 
 
 
@@ -62582,9 +62939,9 @@ __d('reactSkeleton/addBounty/bountyMapInputScreen.js',function(global, require, 
 var React=require('react-native/Libraries/react-native/react-native.js');
 
 var PromptScreen=require('reactSkeleton/shared/promptScreen.js');
-var MapWithCenterPin=require('reactSkeleton/shared/mapWithCenterPin.js');var 
+var MapWithCenterPin=require('reactSkeleton/shared/mapWithCenterPin.js');
 
-
+var BountyNotesScreen=require('reactSkeleton/addBounty/bountyNotesScreen.js');var 
 
 
 
@@ -62659,7 +63016,7 @@ firstLoadComplete:true});});}},
 handleSubmit:function(){
 
 this.props.navigator.push({
-component:BountyLocationScreen});},
+component:BountyNotesScreen});},
 
 
 
@@ -62690,6 +63047,7 @@ render:function(){var _this2=this;
 return (
 React.createElement(View,{style:styles.container},
 React.createElement(PromptScreen,{
+titleMargin:10,
 promptTitle:'Where will this need to be completed?',
 onSubmit:this.handleSubmit,
 screenTitle:"Add Bounty",
@@ -62865,6 +63223,320 @@ backgroundColor:"#FFF",
 width:15,
 height:15,
 borderRadius:7.5}});
+});
+__d('reactSkeleton/addBounty/bountyNotesScreen.js',function(global, require, module, exports) {  'use strict';var _native=require('react-redux/native.js');var _addBounty=require('reactSkeleton/app/actions/addBounty.js');
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+
+var PromptScreen=require('reactSkeleton/shared/promptScreen.js');
+var API=require('reactSkeleton/api.js');
+var HomeScreen=require('reactSkeleton/homeScreen.js');var 
+
+
+
+
+
+
+
+StyleSheet=
+
+
+React.StyleSheet;var TextInput=React.TextInput;var View=React.View;
+
+var timer;
+
+var PickupAvailableScreen=React.createClass({displayName:'PickupAvailableScreen',
+getInitialState:function(){
+return {};},
+
+
+
+componentWillMount:function(){},
+
+
+handleSubmit:function(){var _this=this;
+
+
+
+
+API.addBounty(this.props.addBounty.data,function(res){
+if(_this.props.addBounty.data.location){
+_this.props.navigator.popN(5);}else 
+{
+_this.props.navigator.popN(4);}});},
+
+
+
+
+
+
+
+handleNotesChange:function(notes){
+this.props.dispatch((0,_addBounty.setNotes)(notes));},
+
+render:function(){var _this2=this;
+return (
+React.createElement(View,{style:styles.container},
+React.createElement(PromptScreen,{
+titleMargin:10,
+promptTitle:'Enter an additional description',
+onSubmit:this.handleSubmit,
+screenTitle:"Add Bounty",
+submitText:"Finish",
+onBackPress:function(){
+_this2.props.navigator.pop();}},
+
+
+React.createElement(TextInput,{
+style:styles.textInput,
+autoFocus:true,
+placeholder:"Notes...",
+value:this.props.addBounty.data.notes,
+onChangeText:this.handleNotesChange,
+multiline:true}))));}});
+
+
+
+
+
+
+
+function mapStateToProps(state){
+return {
+addBounty:state.addBounty};}
+
+
+
+module.exports=(0,_native.connect)(mapStateToProps)(PickupAvailableScreen);
+
+var styles=StyleSheet.create({
+container:{
+flex:1},
+
+textInput:{
+color:"#FFF",
+height:140,
+backgroundColor:"#0587D4",
+padding:8,
+borderRadius:4,
+fontSize:16,
+width:350,
+fontWeight:"200",
+alignSelf:"center"}});
+});
+__d('reactSkeleton/shared/usernameNag.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');
+var BlurModal=require('reactSkeleton/shared/blurModal.js');
+var API=require('reactSkeleton/api.js');var 
+
+
+StyleSheet=
+
+
+
+
+React.StyleSheet;var Text=React.Text;var TextInput=React.TextInput;var TouchableOpacity=React.TouchableOpacity;var View=React.View;
+
+module.exports=React.createClass({displayName:'exports',
+getInitialState:function(){
+return {
+modalVisible:false,
+username:""};},
+
+
+componentDidMount:function(){
+if(!this.props.account.username){
+this.setState({
+modalVisible:true});}},
+
+
+
+handleSubmit:function(){var _this=this;
+API.setUsername(this.state.username,function(res){
+console.log(res);
+if(res.ok){
+_this.setState({
+modalVisible:false},
+function(){
+_this.props.onUsernameSet(_this.state.username);});}});},
+
+
+
+
+
+
+render:function(){var _this2=this;
+return (
+React.createElement(View,null,
+React.createElement(BlurModal,{
+visible:this.state.modalVisible},
+React.createElement(View,{style:styles.container},
+
+React.createElement(Text,{style:styles.text},'Pick a Username'),
+
+
+
+React.createElement(TextInput,{
+ref:'textbox',
+onChangeText:function(username){return _this2.setState({username:username});},
+autoFocus:true,
+style:styles.input}),
+
+React.createElement(TouchableOpacity,{
+onPress:this.handleSubmit,
+style:styles.button},
+React.createElement(Text,{
+style:styles.buttonText},'Next'))))));}});
+
+
+
+
+
+
+
+
+
+
+
+var styles=StyleSheet.create({
+container:{
+backgroundColor:"#1b7eaa",
+marginTop:80,
+padding:15,
+marginRight:15,
+marginLeft:15,
+borderRadius:4},
+
+text:{
+textAlign:"center",
+color:"#FFF",
+fontSize:24},
+
+
+box:{
+backgroundColor:"#FFF",
+marginTop:20,
+borderRadius:2,
+
+padding:6},
+
+input:{
+height:40,
+backgroundColor:"#FFF",
+marginTop:12,
+borderRadius:4,
+paddingLeft:5,
+paddingRight:5},
+
+button:{
+backgroundColor:"#5EADD0",
+marginTop:10},
+
+
+
+buttonText:{
+textAlign:"center",
+fontSize:20,
+color:"#FFF",
+padding:10}});
+});
+__d('reactSkeleton/shared/blurModal.js',function(global, require, module, exports) {  'use strict';
+
+var React=require('react-native/Libraries/react-native/react-native.js');var _require=
+require('react-native-blur/index.js');var BlurView=_require.BlurView;var VibrancyView=_require.VibrancyView;var 
+
+
+Dimensions=
+
+
+React.Dimensions;var Modal=React.Modal;var View=React.View;
+
+module.exports=React.createClass({displayName:'exports',
+getInitialState:function(){
+return {};},
+
+
+
+getDefaultProps:function(){
+return {};},
+
+
+render:function(){
+
+return (
+React.createElement(Modal,{
+animated:true,
+transparent:true,
+visible:this.props.visible},
+React.createElement(BlurView,{blurType:'light'},
+React.createElement(View,{style:{
+height:Dimensions.get("window").height}},
+
+this.props.children))));}});
+});
+__d('react-native-blur/index.js',function(global, require, module, exports) {  var BlurView=require('react-native-blur/src/BlurView.js');
+var VibrancyView=require('react-native-blur/src/VibrancyView.js');
+
+module.exports={
+BlurView:BlurView,
+VibrancyView:VibrancyView};
+});
+__d('react-native-blur/src/BlurView.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
+
+requireNativeComponent=
+
+React.requireNativeComponent;var Component=React.Component;var 
+
+BlurView=function(_Component){babelHelpers.inherits(BlurView,_Component);function BlurView(){babelHelpers.classCallCheck(this,BlurView);return babelHelpers.possibleConstructorReturn(this,Object.getPrototypeOf(BlurView).apply(this,arguments));}babelHelpers.createClass(BlurView,[{key:'render',value:function render()
+{
+return (
+React.createElement(NativeBlurView,babelHelpers.extends({},
+this.props,{
+style:[{
+backgroundColor:'transparent'},
+this.props.style]})));}}]);return BlurView;}(Component);
+
+
+
+
+
+
+BlurView.propTypes={
+blurType:React.PropTypes.string};
+
+
+var NativeBlurView=requireNativeComponent('BlurView',BlurView);
+
+module.exports=BlurView;
+});
+__d('react-native-blur/src/VibrancyView.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
+
+requireNativeComponent=
+
+React.requireNativeComponent;var Component=React.Component;var 
+
+VibrancyView=function(_Component){babelHelpers.inherits(VibrancyView,_Component);function VibrancyView(){babelHelpers.classCallCheck(this,VibrancyView);return babelHelpers.possibleConstructorReturn(this,Object.getPrototypeOf(VibrancyView).apply(this,arguments));}babelHelpers.createClass(VibrancyView,[{key:'render',value:function render()
+{
+return (
+React.createElement(NativeVibrancyView,babelHelpers.extends({},
+this.props,{
+style:[{
+backgroundColor:'transparent'},
+this.props.style]})));}}]);return VibrancyView;}(Component);
+
+
+
+
+
+
+VibrancyView.propTypes={
+blurType:React.PropTypes.string};
+
+
+var NativeVibrancyView=requireNativeComponent('VibrancyView',VibrancyView);
+
+module.exports=VibrancyView;
 });
 __d('reactSkeleton/shared/utils.js',function(global, require, module, exports) {  var React=require('react-native/Libraries/react-native/react-native.js');var 
 
@@ -63069,9 +63741,7 @@ return {};},
 componentDidMount:function(){},
 
 
-
 render:function(){var _this=this;
-
 return (
 React.createElement(View,{style:[styles.container]},
 React.createElement(TopSpacer,null),
